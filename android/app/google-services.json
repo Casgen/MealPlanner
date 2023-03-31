@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "903869084397",
+    "firebase_url": "https://umteproject-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "umteproject",
+    "storage_bucket": "umteproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903869084397:android:8c82973718691d4c83d2e4",
+        "android_client_info": {
+          "package_name": "com.example.umte_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "903869084397-h92gpvevu96lv2njeo214eaqus1t3do7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHTAjjuMxQnvTJMgNSp4HB8Fvhy-zzJac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "903869084397-h92gpvevu96lv2njeo214eaqus1t3do7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "903869084397-q4v2dubc9sp6prnr20cfai7c2to5jn8n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.umteProject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
