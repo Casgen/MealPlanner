@@ -18,40 +18,52 @@ class _MealsCard extends State<MealsCard> {
 
   bool _isExpanded = false;
 
-
-
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     ColorScheme colorScheme = theme.colorScheme;
-    TextStyle style = theme.textTheme.titleMedium!.copyWith(
+    TextStyle style = theme.textTheme.titleLarge!.copyWith(
       color: theme.colorScheme.onSurface,
     );
 
     return Card(
       color: colorScheme.onSecondary,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsetsDirectional.all(8.0),
         child: Column(
           children: [
             Row(
               children: [
-                Text(widget.typeOfMeal.getName(), style: style,),
+                Text(widget.typeOfMeal.getName(), style: style),
                 const Spacer(),
                 IconButton(
-                    onPressed: () {  },
+                    onPressed: () {
+                      setState(() {
+                        _isExpanded = !_isExpanded;
+                      });
+                    },
                     icon: const Icon(Icons.menu_rounded)
                 )
               ],
             ),
-            Column(children: [
-              MealItem(mealName: "Banana", amount: 2),
-            ],)
+            Column(children: generateMealItems(_isExpanded))
           ],
         ),
       ),
     );
 
+  }
+
+  List<Widget> generateMealItems(bool isExpanded) {
+      List<MealItem> mealItems = [
+        MealItem(mealName: "Banana", amount: 3),
+        MealItem(mealName: "Strawberries", amount: 2),
+      ];
+
+      if (isExpanded) {
+          return mealItems;
+      }
+      return List.empty();
   }
 
 }

@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:umte_project/ui/components/meal/meals_for_day_card.dart';
-import 'package:umte_project/ui/components/side_menu.dart';
 
-class MyHomePage extends StatefulWidget {
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
+import '../components/side_menu.dart';
 
-class _MyHomePageState extends State<MyHomePage> {
-
-
+class HydrationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -22,7 +15,14 @@ class _MyHomePageState extends State<MyHomePage> {
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),
             title: const Text("Home")),
-        body: ListView(children: [MealsForDayCard(DateTime.now())]),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+
+            ],
+          ),
+        ),
       );
     });
   }

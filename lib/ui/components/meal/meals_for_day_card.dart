@@ -19,7 +19,7 @@ class MealsForDayCard extends StatelessWidget {
 
     ThemeData theme = Theme.of(context);
     ColorScheme colorScheme = theme.colorScheme;
-    TextStyle style = theme.textTheme.titleLarge!.copyWith(
+    TextStyle style = theme.textTheme.headlineLarge!.copyWith(
       color: theme.colorScheme.onSurface,
     );
 
