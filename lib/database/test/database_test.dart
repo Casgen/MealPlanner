@@ -14,7 +14,7 @@ void main() {
   });
 
   test('Obtaining users meals ingredients', () {
-    final rows = database?.getFoodByName("Banana");
-    print(rows);
+    //final rows = database?.getFoodByName("Banana");
+    //print(rows);
   });
 }

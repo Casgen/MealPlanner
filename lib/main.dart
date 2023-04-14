@@ -1,14 +1,15 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:umte_project/database/database.dart';
 import 'package:umte_project/state/app_state.dart';
 import 'package:umte_project/ui/home_page.dart';
 
 void main() {
-  final database = UMTEDatabase();
-
-  runApp(UMTEApp());
+  Get.put(UMTEDatabase());
+  runApp(const UMTEApp());
 }
 
 class UMTEApp extends StatelessWidget {
