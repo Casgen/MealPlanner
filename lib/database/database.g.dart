@@ -477,15 +477,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
           GeneratedColumn.checkTextLength(minTextLength: 5, maxTextLength: 50),
       type: DriftSqlType.string,
       requiredDuringInsert: true);
-  static const VerificationMeta _emailMeta = const VerificationMeta('email');
-  @override
-  late final GeneratedColumn<String> email = GeneratedColumn<String>(
-      'email', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 5, maxTextLength: 70),
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   static const VerificationMeta _passwordMeta =
       const VerificationMeta('password');
   @override
@@ -496,7 +487,7 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
       type: DriftSqlType.string,
       requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, username, email, password];
+  List<GeneratedColumn> get $columns => [id, username, password];
   @override
   String get aliasedName => _alias ?? 'users';
   @override
@@ -514,12 +505,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
           username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
     } else if (isInserting) {
       context.missing(_usernameMeta);
-    }
-    if (data.containsKey('email')) {
-      context.handle(
-          _emailMeta, email.isAcceptableOrUnknown(data['email']!, _emailMeta));
-    } else if (isInserting) {
-      context.missing(_emailMeta);
     }
     if (data.containsKey('password')) {
       context.handle(_passwordMeta,
@@ -540,8 +525,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       username: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}username'])!,
-      email: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}email'])!,
       password: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}password'])!,
     );
@@ -556,19 +539,14 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
 class User extends DataClass implements Insertable<User> {
   final int id;
   final String username;
-  final String email;
   final String password;
   const User(
-      {required this.id,
-      required this.username,
-      required this.email,
-      required this.password});
+      {required this.id, required this.username, required this.password});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['username'] = Variable<String>(username);
-    map['email'] = Variable<String>(email);
     map['password'] = Variable<String>(password);
     return map;
   }
@@ -577,7 +555,6 @@ class User extends DataClass implements Insertable<User> {
     return UsersCompanion(
       id: Value(id),
       username: Value(username),
-      email: Value(email),
       password: Value(password),
     );
   }
@@ -588,7 +565,6 @@ class User extends DataClass implements Insertable<User> {
     return User(
       id: serializer.fromJson<int>(json['id']),
       username: serializer.fromJson<String>(json['username']),
-      email: serializer.fromJson<String>(json['email']),
       password: serializer.fromJson<String>(json['password']),
     );
   }
@@ -598,16 +574,13 @@ class User extends DataClass implements Insertable<User> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'username': serializer.toJson<String>(username),
-      'email': serializer.toJson<String>(email),
       'password': serializer.toJson<String>(password),
     };
   }
 
-  User copyWith({int? id, String? username, String? email, String? password}) =>
-      User(
+  User copyWith({int? id, String? username, String? password}) => User(
         id: id ?? this.id,
         username: username ?? this.username,
-        email: email ?? this.email,
         password: password ?? this.password,
       );
   @override
@@ -615,66 +588,54 @@ class User extends DataClass implements Insertable<User> {
     return (StringBuffer('User(')
           ..write('id: $id, ')
           ..write('username: $username, ')
-          ..write('email: $email, ')
           ..write('password: $password')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, username, email, password);
+  int get hashCode => Object.hash(id, username, password);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is User &&
           other.id == this.id &&
           other.username == this.username &&
-          other.email == this.email &&
           other.password == this.password);
 }
 
 class UsersCompanion extends UpdateCompanion<User> {
   final Value<int> id;
   final Value<String> username;
-  final Value<String> email;
   final Value<String> password;
   const UsersCompanion({
     this.id = const Value.absent(),
     this.username = const Value.absent(),
-    this.email = const Value.absent(),
     this.password = const Value.absent(),
   });
   UsersCompanion.insert({
     this.id = const Value.absent(),
     required String username,
-    required String email,
     required String password,
   })  : username = Value(username),
-        email = Value(email),
         password = Value(password);
   static Insertable<User> custom({
     Expression<int>? id,
     Expression<String>? username,
-    Expression<String>? email,
     Expression<String>? password,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (username != null) 'username': username,
-      if (email != null) 'email': email,
       if (password != null) 'password': password,
     });
   }
 
   UsersCompanion copyWith(
-      {Value<int>? id,
-      Value<String>? username,
-      Value<String>? email,
-      Value<String>? password}) {
+      {Value<int>? id, Value<String>? username, Value<String>? password}) {
     return UsersCompanion(
       id: id ?? this.id,
       username: username ?? this.username,
-      email: email ?? this.email,
       password: password ?? this.password,
     );
   }
@@ -688,9 +649,6 @@ class UsersCompanion extends UpdateCompanion<User> {
     if (username.present) {
       map['username'] = Variable<String>(username.value);
     }
-    if (email.present) {
-      map['email'] = Variable<String>(email.value);
-    }
     if (password.present) {
       map['password'] = Variable<String>(password.value);
     }
@@ -702,7 +660,6 @@ class UsersCompanion extends UpdateCompanion<User> {
     return (StringBuffer('UsersCompanion(')
           ..write('id: $id, ')
           ..write('username: $username, ')
-          ..write('email: $email, ')
           ..write('password: $password')
           ..write(')'))
         .toString();
@@ -724,6 +681,11 @@ class $UsersMealsTable extends UsersMeals
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+      'user_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -733,7 +695,7 @@ class $UsersMealsTable extends UsersMeals
       type: DriftSqlType.string,
       requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, name];
+  List<GeneratedColumn> get $columns => [id, userId, name];
   @override
   String get aliasedName => _alias ?? 'users_meals';
   @override
@@ -745,6 +707,12 @@ class $UsersMealsTable extends UsersMeals
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(_userIdMeta,
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -763,6 +731,8 @@ class $UsersMealsTable extends UsersMeals
     return UsersMeal(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}user_id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
     );
@@ -776,12 +746,14 @@ class $UsersMealsTable extends UsersMeals
 
 class UsersMeal extends DataClass implements Insertable<UsersMeal> {
   final int id;
+  final int userId;
   final String name;
-  const UsersMeal({required this.id, required this.name});
+  const UsersMeal({required this.id, required this.userId, required this.name});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['user_id'] = Variable<int>(userId);
     map['name'] = Variable<String>(name);
     return map;
   }
@@ -789,6 +761,7 @@ class UsersMeal extends DataClass implements Insertable<UsersMeal> {
   UsersMealsCompanion toCompanion(bool nullToAbsent) {
     return UsersMealsCompanion(
       id: Value(id),
+      userId: Value(userId),
       name: Value(name),
     );
   }
@@ -798,6 +771,7 @@ class UsersMeal extends DataClass implements Insertable<UsersMeal> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UsersMeal(
       id: serializer.fromJson<int>(json['id']),
+      userId: serializer.fromJson<int>(json['userId']),
       name: serializer.fromJson<String>(json['name']),
     );
   }
@@ -806,55 +780,69 @@ class UsersMeal extends DataClass implements Insertable<UsersMeal> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'userId': serializer.toJson<int>(userId),
       'name': serializer.toJson<String>(name),
     };
   }
 
-  UsersMeal copyWith({int? id, String? name}) => UsersMeal(
+  UsersMeal copyWith({int? id, int? userId, String? name}) => UsersMeal(
         id: id ?? this.id,
+        userId: userId ?? this.userId,
         name: name ?? this.name,
       );
   @override
   String toString() {
     return (StringBuffer('UsersMeal(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('name: $name')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name);
+  int get hashCode => Object.hash(id, userId, name);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is UsersMeal && other.id == this.id && other.name == this.name);
+      (other is UsersMeal &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.name == this.name);
 }
 
 class UsersMealsCompanion extends UpdateCompanion<UsersMeal> {
   final Value<int> id;
+  final Value<int> userId;
   final Value<String> name;
   const UsersMealsCompanion({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     this.name = const Value.absent(),
   });
   UsersMealsCompanion.insert({
     this.id = const Value.absent(),
+    required int userId,
     required String name,
-  }) : name = Value(name);
+  })  : userId = Value(userId),
+        name = Value(name);
   static Insertable<UsersMeal> custom({
     Expression<int>? id,
+    Expression<int>? userId,
     Expression<String>? name,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
       if (name != null) 'name': name,
     });
   }
 
-  UsersMealsCompanion copyWith({Value<int>? id, Value<String>? name}) {
+  UsersMealsCompanion copyWith(
+      {Value<int>? id, Value<int>? userId, Value<String>? name}) {
     return UsersMealsCompanion(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       name: name ?? this.name,
     );
   }
@@ -864,6 +852,9 @@ class UsersMealsCompanion extends UpdateCompanion<UsersMeal> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -875,6 +866,7 @@ class UsersMealsCompanion extends UpdateCompanion<UsersMeal> {
   String toString() {
     return (StringBuffer('UsersMealsCompanion(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('name: $name')
           ..write(')'))
         .toString();
@@ -1558,6 +1550,7 @@ abstract class _$UMTEDatabase extends GeneratedDatabase {
   late final $UsersConsumedMealsTable usersConsumedMeals =
       $UsersConsumedMealsTable(this);
   late final FoodsDao foodsDao = FoodsDao(this as UMTEDatabase);
+  late final UsersDao usersDao = UsersDao(this as UMTEDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();

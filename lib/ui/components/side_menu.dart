@@ -6,6 +6,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:umte_project/database/database.dart';
 import 'package:umte_project/ui/components/meal/meal_widget.dart';
 import 'package:umte_project/ui/screens/hydration_screen.dart';
+import 'package:umte_project/ui/screens/login_screen.dart';
 
 import '../home_page.dart';
 
@@ -31,6 +32,10 @@ class SideMenu extends StatelessWidget {
           MenuItem(text: "Home", icon: Icons.home, onTap: () {
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => MyHomePage()));
+          }),
+          MenuItem(text: "Login", icon: Icons.account_circle_outlined, onTap: () {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => LoginPage()));
           }),
           MenuItem(text: "Food Menu", icon: Icons.restaurant_menu, onTap: () {}),
           MenuItem(text: "Hydration", icon: Icons.water_drop, onTap: () {

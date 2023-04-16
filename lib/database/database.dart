@@ -7,6 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:umte_project/data/enums/type_of_meal.dart';
 import 'package:umte_project/database/dao/foods_dao.dart';
+import 'package:umte_project/database/dao/user_dao.dart';
 import 'package:umte_project/database/data.dart';
 import 'package:umte_project/database/tables.dart';
 
@@ -16,7 +17,7 @@ bool inDevelopment = true;
 
 @DriftDatabase(
   tables: [Foods, Users, UsersMeals, UsersMealsIngredients, UsersConsumedMeals],
-  daos: [FoodsDao]
+  daos: [FoodsDao, UsersDao]
 )
 class UMTEDatabase extends _$UMTEDatabase {
 
