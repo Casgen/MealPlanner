@@ -19,7 +19,7 @@ class Foods extends Table {
 class Users extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get username => text().withLength(min: 5, max: 50)();
-  TextColumn get password => text().withLength(min: 12, max: 30)();
+  TextColumn get password => text().withLength(min: 128, max: 128)();
 }
 
 class UsersMeals extends Table {

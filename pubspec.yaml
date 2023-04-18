@@ -27,6 +27,7 @@ dependencies:
   format: ^1.1.1
   get: ^4.6.5
   crypto: ^3.0.2
+  async_loader: ^0.1.2
 
 dev_dependencies:
   drift_dev: ^2.6.0

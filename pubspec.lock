@@ -57,6 +57,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.10.0"
+  async_loader:
+    dependency: "direct main"
+    description:
+      name: async_loader
+      sha256: f36721389a85237927f93fd09ec9e0eb23da1e47502d380e67ecd0a731def5b0
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.2"
   boolean_selector:
     dependency: transitive
     description:

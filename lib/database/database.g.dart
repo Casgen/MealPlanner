@@ -482,8 +482,8 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   @override
   late final GeneratedColumn<String> password = GeneratedColumn<String>(
       'password', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 12, maxTextLength: 30),
+      additionalChecks: GeneratedColumn.checkTextLength(
+          minTextLength: 128, maxTextLength: 128),
       type: DriftSqlType.string,
       requiredDuringInsert: true);
   @override

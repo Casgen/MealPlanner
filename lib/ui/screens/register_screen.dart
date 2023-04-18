@@ -1,35 +1,32 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:umte_project/services/user_service.dart';
 import 'package:umte_project/ui/components/side_menu.dart';
-import 'package:umte_project/ui/home_page.dart';
-import 'package:umte_project/ui/screens/register_screen.dart';
+import 'package:umte_project/ui/screens/login_screen.dart';
 import 'package:umte_project/utils/validation_utils.dart';
 
-import '../../data/enums/response_enum.dart';
-
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPage();
+  State<RegisterPage> createState() => _RegisterPage();
 }
 
-class _LoginPage extends State<LoginPage> {
+class _RegisterPage extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
   final UserService userService = Get.find<UserService>();
 
   String username = '';
   String password = '';
+  String passwordAgain = '';
 
   bool showProgress = false;
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    TextStyle signUpStyle = theme.textTheme.labelLarge!
-        .copyWith(decoration: TextDecoration.underline);
 
     return LayoutBuilder(builder: (builder, constraints) {
       return Scaffold(
@@ -81,44 +78,48 @@ class _LoginPage extends State<LoginPage> {
                         validator: ValidationUtils.validatePassword,
                       ),
                       const SizedBox(
+                        height: 30,
+                      ),
+                      TextFormField(
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Confirm password",
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            password = value;
+                          });
+                        },
+                        validator: (value) {
+                          String? error = ValidationUtils.validatePassword(value);
+
+                          if (error != null) {
+                            return error;
+                          }
+
+                          if (password != value) {
+                            return "Passwords do not match!";
+                          }
+
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
                         height: 20,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text("Don't have an account? "),
-                          GestureDetector(
-                            onTap: () async {
-                              final result = await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const RegisterPage()));
-
-                              if (!mounted) return;
-
-                              ScaffoldMessenger.of(context)
-                                ..removeCurrentSnackBar()
-                                ..showSnackBar(
-                                    SnackBar(content: Text("$result")));
-                            },
-                            child: Text(
-                              "Sign up!",
-                              style: signUpStyle,
-                            ),
+                          showProgress
+                          ? const CircularProgressIndicator()
+                          : Expanded(
+                            child: FilledButton(
+                                onPressed: () => signUp(context),
+                                child: const Text("Sign up")),
                           ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          showProgress
-                              ? const CircularProgressIndicator()
-                              : Expanded(
-                                  child: FilledButton(
-                                      onPressed: () => onLogin(context),
-                                      child: const Text("Login")),
-                                ),
-                        ],
-                      )
                     ],
                   ),
                 ),
@@ -130,48 +131,29 @@ class _LoginPage extends State<LoginPage> {
     });
   }
 
-  Future<void> onLogin(BuildContext context) async {
+  void signUp(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      ThemeData theme = Theme.of(context);
-
-      setState(() {
-        showProgress = true;
-      });
-
       try {
-        ResponseEnum res = await userService.loginUser(username, password);
+        setState(() {
+          showProgress = true;
+        });
 
-        if (res != ResponseEnum.success) {
-          if (!context.mounted) return;
-
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-              content: Text(res.getMessage()),
-              backgroundColor: theme.colorScheme.error,
-            ));
-        }
+        await userService.registerUser(username, password);
 
         // Checks whether the building of the widget is done. otherwise wait
         // for it to mount.
         if (!context.mounted) return;
 
-        Navigator.of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) => MyHomePage()));
+        Navigator.pop(context, "Registration successful!");
+
 
       } catch (err) {
         print("RuntimeError: $err");
         setState(() {
           showProgress = false;
         });
-
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(
-            content: const Text("There was an error logging in!"),
-            backgroundColor: theme.colorScheme.error,
-          ));
       }
+
     }
   }
 }

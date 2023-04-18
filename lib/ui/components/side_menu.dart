@@ -35,7 +35,7 @@ class SideMenu extends StatelessWidget {
           }),
           MenuItem(text: "Login", icon: Icons.account_circle_outlined, onTap: () {
             Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => LoginPage()));
+                MaterialPageRoute(builder: (context) => const LoginPage()));
           }),
           MenuItem(text: "Food Menu", icon: Icons.restaurant_menu, onTap: () {}),
           MenuItem(text: "Hydration", icon: Icons.water_drop, onTap: () {

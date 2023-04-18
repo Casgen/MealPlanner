@@ -18,7 +18,7 @@ class UserService {
     return hash.toString();
   }
 
-  void registerUser(String username, String password) async {
+  Future<void> registerUser(String username, String password) async {
     await _usersDao.addUser(username, _hashString(password));
   }
 
