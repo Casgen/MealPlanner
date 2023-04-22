@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:umte_project/database/database.dart';
+import 'package:umte_project/services/foods_service.dart';
 import 'package:umte_project/services/user_service.dart';
 import 'package:umte_project/state/app_state.dart';
 import 'package:umte_project/ui/screens/login_screen.dart';
 
 void main() {
+  Get.put(UMTEDatabase());
   initSingletons();
   runApp(const UMTEApp());
 }
 
 void initSingletons() {
-  Get.put(UMTEDatabase());
-  Get.put(UserService(Get.find<UMTEDatabase>()));
+  Get.put(UserService());
+  Get.put(FoodsService());
 }
 
 class UMTEApp extends StatelessWidget {
@@ -24,7 +26,7 @@ class UMTEApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'Namer App',
+        title: 'Caloric Tables',
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),

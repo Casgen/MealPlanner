@@ -41,6 +41,7 @@ class _HydrationScreenState extends State<HydrationScreen> {
       return Scaffold(
         drawer: const SideMenu(),
         appBar: AppBar(
+            iconTheme: IconThemeData(color: theme.colorScheme.onPrimary),
             backgroundColor: theme.primaryColor,
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),

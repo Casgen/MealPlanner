@@ -62,7 +62,7 @@ class _RegisterPage extends State<RegisterPage> {
                         validator: ValidationUtils.validateUsername,
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 20,
                       ),
                       TextFormField(
                         obscureText: true,
@@ -78,7 +78,7 @@ class _RegisterPage extends State<RegisterPage> {
                         validator: ValidationUtils.validatePassword,
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 20,
                       ),
                       TextFormField(
                         obscureText: true,
@@ -88,7 +88,7 @@ class _RegisterPage extends State<RegisterPage> {
                         ),
                         onChanged: (value) {
                           setState(() {
-                            password = value;
+                            passwordAgain = value;
                           });
                         },
                         validator: (value) {

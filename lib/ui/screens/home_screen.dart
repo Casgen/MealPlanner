@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:umte_project/ui/components/meal/meals_for_day_card.dart';
 import 'package:umte_project/ui/components/side_menu.dart';
 
-class MyHomePage extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomeScreenState extends State<HomeScreen> {
 
 
   @override
@@ -18,6 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return Scaffold(
         drawer: const SideMenu(),
         appBar: AppBar(
+            iconTheme: IconThemeData(color: theme.colorScheme.onPrimary),
             backgroundColor: theme.primaryColor,
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:umte_project/services/user_service.dart';
 import 'package:umte_project/ui/components/side_menu.dart';
-import 'package:umte_project/ui/home_page.dart';
+import 'package:umte_project/ui/screens/home_screen.dart';
 import 'package:umte_project/ui/screens/register_screen.dart';
 import 'package:umte_project/utils/validation_utils.dart';
 
@@ -64,9 +65,7 @@ class _LoginPage extends State<LoginPage> {
                         },
                         validator: ValidationUtils.validateUsername,
                       ),
-                      const SizedBox(
-                        height: 30,
-                      ),
+                      const SizedBox(height: 20),
                       TextFormField(
                         obscureText: true,
                         decoration: const InputDecoration(
@@ -80,9 +79,7 @@ class _LoginPage extends State<LoginPage> {
                         },
                         validator: ValidationUtils.validatePassword,
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -108,7 +105,9 @@ class _LoginPage extends State<LoginPage> {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 10),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           showProgress
                               ? const CircularProgressIndicator()
@@ -150,15 +149,18 @@ class _LoginPage extends State<LoginPage> {
               content: Text(res.getMessage()),
               backgroundColor: theme.colorScheme.error,
             ));
+
+          setState(() {
+            showProgress = false;
+          });
+        } else {
+          // Checks whether the building of the widget is done. otherwise wait
+          // for it to mount.
+          if (!context.mounted) return;
+
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => HomeScreen()));
         }
-
-        // Checks whether the building of the widget is done. otherwise wait
-        // for it to mount.
-        if (!context.mounted) return;
-
-        Navigator.of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) => MyHomePage()));
-
       } catch (err) {
         print("RuntimeError: $err");
         setState(() {

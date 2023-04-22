@@ -5,4 +5,7 @@ part of 'user_dao.dart';
 // ignore_for_file: type=lint
 mixin _$UsersDaoMixin on DatabaseAccessor<UMTEDatabase> {
   $UsersTable get users => attachedDatabase.users;
+  $FoodsTable get foods => attachedDatabase.foods;
+  $UsersFavoriteFoodsTable get usersFavoriteFoods =>
+      attachedDatabase.usersFavoriteFoods;
 }

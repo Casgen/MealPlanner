@@ -61,14 +61,12 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
   late final GeneratedColumn<double> fats = GeneratedColumn<double>(
       'fats', aliasedName, true,
       type: DriftSqlType.double, requiredDuringInsert: false);
-  static const VerificationMeta _unitsMeta = const VerificationMeta('units');
+  static const VerificationMeta _unitMeta = const VerificationMeta('unit');
   @override
-  late final GeneratedColumn<String> units = GeneratedColumn<String>(
-      'units', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 30),
-      type: DriftSqlType.string,
-      requiredDuringInsert: true);
+  late final GeneratedColumnWithTypeConverter<Unit, String> unit =
+      GeneratedColumn<String>('unit', aliasedName, false,
+              type: DriftSqlType.string, requiredDuringInsert: true)
+          .withConverter<Unit>($FoodsTable.$converterunit);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -79,7 +77,7 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
         carbohydrates,
         sugars,
         fats,
-        units
+        unit
       ];
   @override
   String get aliasedName => _alias ?? 'foods';
@@ -129,12 +127,7 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
       context.handle(
           _fatsMeta, fats.isAcceptableOrUnknown(data['fats']!, _fatsMeta));
     }
-    if (data.containsKey('units')) {
-      context.handle(
-          _unitsMeta, units.isAcceptableOrUnknown(data['units']!, _unitsMeta));
-    } else if (isInserting) {
-      context.missing(_unitsMeta);
-    }
+    context.handle(_unitMeta, const VerificationResult.success());
     return context;
   }
 
@@ -160,8 +153,8 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
           .read(DriftSqlType.double, data['${effectivePrefix}sugars']),
       fats: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}fats']),
-      units: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}units'])!,
+      unit: $FoodsTable.$converterunit.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}unit'])!),
     );
   }
 
@@ -169,6 +162,9 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
   $FoodsTable createAlias(String alias) {
     return $FoodsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<Unit, String, String> $converterunit =
+      const EnumNameConverter<Unit>(Unit.values);
 }
 
 class Food extends DataClass implements Insertable<Food> {
@@ -180,7 +176,7 @@ class Food extends DataClass implements Insertable<Food> {
   final double? carbohydrates;
   final double? sugars;
   final double? fats;
-  final String units;
+  final Unit unit;
   const Food(
       {required this.id,
       required this.name,
@@ -190,7 +186,7 @@ class Food extends DataClass implements Insertable<Food> {
       this.carbohydrates,
       this.sugars,
       this.fats,
-      required this.units});
+      required this.unit});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -212,7 +208,10 @@ class Food extends DataClass implements Insertable<Food> {
     if (!nullToAbsent || fats != null) {
       map['fats'] = Variable<double>(fats);
     }
-    map['units'] = Variable<String>(units);
+    {
+      final converter = $FoodsTable.$converterunit;
+      map['unit'] = Variable<String>(converter.toSql(unit));
+    }
     return map;
   }
 
@@ -232,7 +231,7 @@ class Food extends DataClass implements Insertable<Food> {
       sugars:
           sugars == null && nullToAbsent ? const Value.absent() : Value(sugars),
       fats: fats == null && nullToAbsent ? const Value.absent() : Value(fats),
-      units: Value(units),
+      unit: Value(unit),
     );
   }
 
@@ -248,7 +247,8 @@ class Food extends DataClass implements Insertable<Food> {
       carbohydrates: serializer.fromJson<double?>(json['carbohydrates']),
       sugars: serializer.fromJson<double?>(json['sugars']),
       fats: serializer.fromJson<double?>(json['fats']),
-      units: serializer.fromJson<String>(json['units']),
+      unit: $FoodsTable.$converterunit
+          .fromJson(serializer.fromJson<String>(json['unit'])),
     );
   }
   @override
@@ -263,7 +263,8 @@ class Food extends DataClass implements Insertable<Food> {
       'carbohydrates': serializer.toJson<double?>(carbohydrates),
       'sugars': serializer.toJson<double?>(sugars),
       'fats': serializer.toJson<double?>(fats),
-      'units': serializer.toJson<String>(units),
+      'unit':
+          serializer.toJson<String>($FoodsTable.$converterunit.toJson(unit)),
     };
   }
 
@@ -276,7 +277,7 @@ class Food extends DataClass implements Insertable<Food> {
           Value<double?> carbohydrates = const Value.absent(),
           Value<double?> sugars = const Value.absent(),
           Value<double?> fats = const Value.absent(),
-          String? units}) =>
+          Unit? unit}) =>
       Food(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -287,7 +288,7 @@ class Food extends DataClass implements Insertable<Food> {
             carbohydrates.present ? carbohydrates.value : this.carbohydrates,
         sugars: sugars.present ? sugars.value : this.sugars,
         fats: fats.present ? fats.value : this.fats,
-        units: units ?? this.units,
+        unit: unit ?? this.unit,
       );
   @override
   String toString() {
@@ -300,14 +301,14 @@ class Food extends DataClass implements Insertable<Food> {
           ..write('carbohydrates: $carbohydrates, ')
           ..write('sugars: $sugars, ')
           ..write('fats: $fats, ')
-          ..write('units: $units')
+          ..write('unit: $unit')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(id, name, description, calories, fibre,
-      carbohydrates, sugars, fats, units);
+      carbohydrates, sugars, fats, unit);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -320,7 +321,7 @@ class Food extends DataClass implements Insertable<Food> {
           other.carbohydrates == this.carbohydrates &&
           other.sugars == this.sugars &&
           other.fats == this.fats &&
-          other.units == this.units);
+          other.unit == this.unit);
 }
 
 class FoodsCompanion extends UpdateCompanion<Food> {
@@ -332,7 +333,7 @@ class FoodsCompanion extends UpdateCompanion<Food> {
   final Value<double?> carbohydrates;
   final Value<double?> sugars;
   final Value<double?> fats;
-  final Value<String> units;
+  final Value<Unit> unit;
   const FoodsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -342,7 +343,7 @@ class FoodsCompanion extends UpdateCompanion<Food> {
     this.carbohydrates = const Value.absent(),
     this.sugars = const Value.absent(),
     this.fats = const Value.absent(),
-    this.units = const Value.absent(),
+    this.unit = const Value.absent(),
   });
   FoodsCompanion.insert({
     this.id = const Value.absent(),
@@ -353,10 +354,10 @@ class FoodsCompanion extends UpdateCompanion<Food> {
     this.carbohydrates = const Value.absent(),
     this.sugars = const Value.absent(),
     this.fats = const Value.absent(),
-    required String units,
+    required Unit unit,
   })  : name = Value(name),
         description = Value(description),
-        units = Value(units);
+        unit = Value(unit);
   static Insertable<Food> custom({
     Expression<int>? id,
     Expression<String>? name,
@@ -366,7 +367,7 @@ class FoodsCompanion extends UpdateCompanion<Food> {
     Expression<double>? carbohydrates,
     Expression<double>? sugars,
     Expression<double>? fats,
-    Expression<String>? units,
+    Expression<String>? unit,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -377,7 +378,7 @@ class FoodsCompanion extends UpdateCompanion<Food> {
       if (carbohydrates != null) 'carbohydrates': carbohydrates,
       if (sugars != null) 'sugars': sugars,
       if (fats != null) 'fats': fats,
-      if (units != null) 'units': units,
+      if (unit != null) 'unit': unit,
     });
   }
 
@@ -390,7 +391,7 @@ class FoodsCompanion extends UpdateCompanion<Food> {
       Value<double?>? carbohydrates,
       Value<double?>? sugars,
       Value<double?>? fats,
-      Value<String>? units}) {
+      Value<Unit>? unit}) {
     return FoodsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -400,7 +401,7 @@ class FoodsCompanion extends UpdateCompanion<Food> {
       carbohydrates: carbohydrates ?? this.carbohydrates,
       sugars: sugars ?? this.sugars,
       fats: fats ?? this.fats,
-      units: units ?? this.units,
+      unit: unit ?? this.unit,
     );
   }
 
@@ -431,8 +432,9 @@ class FoodsCompanion extends UpdateCompanion<Food> {
     if (fats.present) {
       map['fats'] = Variable<double>(fats.value);
     }
-    if (units.present) {
-      map['units'] = Variable<String>(units.value);
+    if (unit.present) {
+      final converter = $FoodsTable.$converterunit;
+      map['unit'] = Variable<String>(converter.toSql(unit.value));
     }
     return map;
   }
@@ -448,7 +450,7 @@ class FoodsCompanion extends UpdateCompanion<Food> {
           ..write('carbohydrates: $carbohydrates, ')
           ..write('sugars: $sugars, ')
           ..write('fats: $fats, ')
-          ..write('units: $units')
+          ..write('unit: $unit')
           ..write(')'))
         .toString();
   }
@@ -685,7 +687,10 @@ class $UsersMealsTable extends UsersMeals
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES users (id)'));
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -1149,18 +1154,27 @@ class $UsersConsumedMealsTable extends UsersConsumedMeals
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES users (id)'));
   static const VerificationMeta _foodIdMeta = const VerificationMeta('foodId');
   @override
   late final GeneratedColumn<int> foodId = GeneratedColumn<int>(
-      'food_id', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      'food_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES foods (id)'));
   static const VerificationMeta _usersMealIdMeta =
       const VerificationMeta('usersMealId');
   @override
   late final GeneratedColumn<int> usersMealId = GeneratedColumn<int>(
       'users_meal_id', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES users_meals (id)'));
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
   late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
@@ -1215,6 +1229,8 @@ class $UsersConsumedMealsTable extends UsersConsumedMeals
     if (data.containsKey('food_id')) {
       context.handle(_foodIdMeta,
           foodId.isAcceptableOrUnknown(data['food_id']!, _foodIdMeta));
+    } else if (isInserting) {
+      context.missing(_foodIdMeta);
     }
     if (data.containsKey('users_meal_id')) {
       context.handle(
@@ -1255,7 +1271,7 @@ class $UsersConsumedMealsTable extends UsersConsumedMeals
       userId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}user_id'])!,
       foodId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}food_id']),
+          .read(DriftSqlType.int, data['${effectivePrefix}food_id'])!,
       usersMealId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}users_meal_id']),
       date: attachedDatabase.typeMapping
@@ -1283,7 +1299,7 @@ class UsersConsumedMeal extends DataClass
     implements Insertable<UsersConsumedMeal> {
   final int id;
   final int userId;
-  final int? foodId;
+  final int foodId;
   final int? usersMealId;
   final DateTime date;
   final TypeOfMeal typeOfMeal;
@@ -1292,7 +1308,7 @@ class UsersConsumedMeal extends DataClass
   const UsersConsumedMeal(
       {required this.id,
       required this.userId,
-      this.foodId,
+      required this.foodId,
       this.usersMealId,
       required this.date,
       required this.typeOfMeal,
@@ -1303,9 +1319,7 @@ class UsersConsumedMeal extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['user_id'] = Variable<int>(userId);
-    if (!nullToAbsent || foodId != null) {
-      map['food_id'] = Variable<int>(foodId);
-    }
+    map['food_id'] = Variable<int>(foodId);
     if (!nullToAbsent || usersMealId != null) {
       map['users_meal_id'] = Variable<int>(usersMealId);
     }
@@ -1323,8 +1337,7 @@ class UsersConsumedMeal extends DataClass
     return UsersConsumedMealsCompanion(
       id: Value(id),
       userId: Value(userId),
-      foodId:
-          foodId == null && nullToAbsent ? const Value.absent() : Value(foodId),
+      foodId: Value(foodId),
       usersMealId: usersMealId == null && nullToAbsent
           ? const Value.absent()
           : Value(usersMealId),
@@ -1341,7 +1354,7 @@ class UsersConsumedMeal extends DataClass
     return UsersConsumedMeal(
       id: serializer.fromJson<int>(json['id']),
       userId: serializer.fromJson<int>(json['userId']),
-      foodId: serializer.fromJson<int?>(json['foodId']),
+      foodId: serializer.fromJson<int>(json['foodId']),
       usersMealId: serializer.fromJson<int?>(json['usersMealId']),
       date: serializer.fromJson<DateTime>(json['date']),
       typeOfMeal: $UsersConsumedMealsTable.$convertertypeOfMeal
@@ -1356,7 +1369,7 @@ class UsersConsumedMeal extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'userId': serializer.toJson<int>(userId),
-      'foodId': serializer.toJson<int?>(foodId),
+      'foodId': serializer.toJson<int>(foodId),
       'usersMealId': serializer.toJson<int?>(usersMealId),
       'date': serializer.toJson<DateTime>(date),
       'typeOfMeal': serializer.toJson<String>(
@@ -1369,7 +1382,7 @@ class UsersConsumedMeal extends DataClass
   UsersConsumedMeal copyWith(
           {int? id,
           int? userId,
-          Value<int?> foodId = const Value.absent(),
+          int? foodId,
           Value<int?> usersMealId = const Value.absent(),
           DateTime? date,
           TypeOfMeal? typeOfMeal,
@@ -1378,7 +1391,7 @@ class UsersConsumedMeal extends DataClass
       UsersConsumedMeal(
         id: id ?? this.id,
         userId: userId ?? this.userId,
-        foodId: foodId.present ? foodId.value : this.foodId,
+        foodId: foodId ?? this.foodId,
         usersMealId: usersMealId.present ? usersMealId.value : this.usersMealId,
         date: date ?? this.date,
         typeOfMeal: typeOfMeal ?? this.typeOfMeal,
@@ -1420,7 +1433,7 @@ class UsersConsumedMeal extends DataClass
 class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
   final Value<int> id;
   final Value<int> userId;
-  final Value<int?> foodId;
+  final Value<int> foodId;
   final Value<int?> usersMealId;
   final Value<DateTime> date;
   final Value<TypeOfMeal> typeOfMeal;
@@ -1439,13 +1452,14 @@ class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
   UsersConsumedMealsCompanion.insert({
     this.id = const Value.absent(),
     required int userId,
-    this.foodId = const Value.absent(),
+    required int foodId,
     this.usersMealId = const Value.absent(),
     required DateTime date,
     required TypeOfMeal typeOfMeal,
     required int amount,
     required bool isChecked,
   })  : userId = Value(userId),
+        foodId = Value(foodId),
         date = Value(date),
         typeOfMeal = Value(typeOfMeal),
         amount = Value(amount),
@@ -1475,7 +1489,7 @@ class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
   UsersConsumedMealsCompanion copyWith(
       {Value<int>? id,
       Value<int>? userId,
-      Value<int?>? foodId,
+      Value<int>? foodId,
       Value<int?>? usersMealId,
       Value<DateTime>? date,
       Value<TypeOfMeal>? typeOfMeal,
@@ -1540,6 +1554,219 @@ class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
   }
 }
 
+class $UsersFavoriteFoodsTable extends UsersFavoriteFoods
+    with TableInfo<$UsersFavoriteFoodsTable, UsersFavoriteFood> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UsersFavoriteFoodsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+      'user_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES users (id)'));
+  static const VerificationMeta _foodIdMeta = const VerificationMeta('foodId');
+  @override
+  late final GeneratedColumn<int> foodId = GeneratedColumn<int>(
+      'food_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES foods (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [id, userId, foodId];
+  @override
+  String get aliasedName => _alias ?? 'users_favorite_foods';
+  @override
+  String get actualTableName => 'users_favorite_foods';
+  @override
+  VerificationContext validateIntegrity(Insertable<UsersFavoriteFood> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(_userIdMeta,
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('food_id')) {
+      context.handle(_foodIdMeta,
+          foodId.isAcceptableOrUnknown(data['food_id']!, _foodIdMeta));
+    } else if (isInserting) {
+      context.missing(_foodIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  UsersFavoriteFood map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UsersFavoriteFood(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}user_id'])!,
+      foodId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}food_id'])!,
+    );
+  }
+
+  @override
+  $UsersFavoriteFoodsTable createAlias(String alias) {
+    return $UsersFavoriteFoodsTable(attachedDatabase, alias);
+  }
+}
+
+class UsersFavoriteFood extends DataClass
+    implements Insertable<UsersFavoriteFood> {
+  final int id;
+  final int userId;
+  final int foodId;
+  const UsersFavoriteFood(
+      {required this.id, required this.userId, required this.foodId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['user_id'] = Variable<int>(userId);
+    map['food_id'] = Variable<int>(foodId);
+    return map;
+  }
+
+  UsersFavoriteFoodsCompanion toCompanion(bool nullToAbsent) {
+    return UsersFavoriteFoodsCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      foodId: Value(foodId),
+    );
+  }
+
+  factory UsersFavoriteFood.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UsersFavoriteFood(
+      id: serializer.fromJson<int>(json['id']),
+      userId: serializer.fromJson<int>(json['userId']),
+      foodId: serializer.fromJson<int>(json['foodId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'userId': serializer.toJson<int>(userId),
+      'foodId': serializer.toJson<int>(foodId),
+    };
+  }
+
+  UsersFavoriteFood copyWith({int? id, int? userId, int? foodId}) =>
+      UsersFavoriteFood(
+        id: id ?? this.id,
+        userId: userId ?? this.userId,
+        foodId: foodId ?? this.foodId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('UsersFavoriteFood(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('foodId: $foodId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, userId, foodId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UsersFavoriteFood &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.foodId == this.foodId);
+}
+
+class UsersFavoriteFoodsCompanion extends UpdateCompanion<UsersFavoriteFood> {
+  final Value<int> id;
+  final Value<int> userId;
+  final Value<int> foodId;
+  const UsersFavoriteFoodsCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.foodId = const Value.absent(),
+  });
+  UsersFavoriteFoodsCompanion.insert({
+    this.id = const Value.absent(),
+    required int userId,
+    required int foodId,
+  })  : userId = Value(userId),
+        foodId = Value(foodId);
+  static Insertable<UsersFavoriteFood> custom({
+    Expression<int>? id,
+    Expression<int>? userId,
+    Expression<int>? foodId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (foodId != null) 'food_id': foodId,
+    });
+  }
+
+  UsersFavoriteFoodsCompanion copyWith(
+      {Value<int>? id, Value<int>? userId, Value<int>? foodId}) {
+    return UsersFavoriteFoodsCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      foodId: foodId ?? this.foodId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
+    }
+    if (foodId.present) {
+      map['food_id'] = Variable<int>(foodId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UsersFavoriteFoodsCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('foodId: $foodId')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$UMTEDatabase extends GeneratedDatabase {
   _$UMTEDatabase(QueryExecutor e) : super(e);
   late final $FoodsTable foods = $FoodsTable(this);
@@ -1549,12 +1776,20 @@ abstract class _$UMTEDatabase extends GeneratedDatabase {
       $UsersMealsIngredientsTable(this);
   late final $UsersConsumedMealsTable usersConsumedMeals =
       $UsersConsumedMealsTable(this);
+  late final $UsersFavoriteFoodsTable usersFavoriteFoods =
+      $UsersFavoriteFoodsTable(this);
   late final FoodsDao foodsDao = FoodsDao(this as UMTEDatabase);
   late final UsersDao usersDao = UsersDao(this as UMTEDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [foods, users, usersMeals, usersMealsIngredients, usersConsumedMeals];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        foods,
+        users,
+        usersMeals,
+        usersMealsIngredients,
+        usersConsumedMeals,
+        usersFavoriteFoods
+      ];
 }

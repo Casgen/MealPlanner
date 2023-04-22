@@ -11,12 +11,14 @@ import 'package:umte_project/database/dao/user_dao.dart';
 import 'package:umte_project/database/data.dart';
 import 'package:umte_project/database/tables.dart';
 
+import '../data/enums/unit.dart';
+
 part "database.g.dart";
 
 bool inDevelopment = true;
 
 @DriftDatabase(
-  tables: [Foods, Users, UsersMeals, UsersMealsIngredients, UsersConsumedMeals],
+  tables: [Foods, Users, UsersMeals, UsersMealsIngredients, UsersConsumedMeals, UsersFavoriteFoods],
   daos: [FoodsDao, UsersDao]
 )
 class UMTEDatabase extends _$UMTEDatabase {

@@ -8,7 +8,8 @@ import 'package:umte_project/ui/components/meal/meal_widget.dart';
 import 'package:umte_project/ui/screens/hydration_screen.dart';
 import 'package:umte_project/ui/screens/login_screen.dart';
 
-import '../home_page.dart';
+import '../screens/search_foods_screen.dart';
+import '../screens/home_screen.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});
@@ -29,43 +30,28 @@ class SideMenu extends StatelessWidget {
                   style: theme.textTheme.displaySmall!
                       .copyWith(color: theme.colorScheme.onPrimary))
           ),
-          MenuItem(text: "Home", icon: Icons.home, onTap: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => MyHomePage()));
-          }),
-          MenuItem(text: "Login", icon: Icons.account_circle_outlined, onTap: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const LoginPage()));
-          }),
+          MenuItem(text: "Home", icon: Icons.home, onTap: () => navigateTo(context, HomeScreen())),
+          MenuItem(text: "Foods", icon: Icons.restaurant_rounded, onTap: () => navigateTo(context, SearchFoodsScreen())),
+          MenuItem(text: "Login", icon: Icons.account_circle_outlined, onTap: () => navigateTo(context, const LoginPage())),
           MenuItem(text: "Food Menu", icon: Icons.restaurant_menu, onTap: () {}),
-          MenuItem(text: "Hydration", icon: Icons.water_drop, onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const HydrationScreen())
-            );
-          }),
+          MenuItem(text: "Hydration", icon: Icons.water_drop, onTap: () => navigateTo(context, const HydrationScreen())),
           MenuItem(text: "Your meals",icon: Icons.menu_book, onTap: () {}),
-          MenuItem(text: "Database",icon: Icons.data_array, onTap: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) {
-                  return DriftDbViewer(Get.find<UMTEDatabase>());
-                })
-            );
-          }),
-          MenuItem(text: "Test Data",icon: Icons.data_array, onTap: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) {
-                  Food? food;
-                  Get.find<UMTEDatabase>().foodsDao.getFood(1).then((value) {
-                    food = value;
-                  });
-                  return Text(food != null ? "Nothing" : food!.name);
-                })
-            );
-          })
+          MenuItem(
+              text: "Database",
+              icon: Icons.data_array,
+              onTap: () => navigateTo(context, DriftDbViewer(Get.find<UMTEDatabase>()))
+          ),
         ],
       ),
     );
   }
+
+  void navigateTo<T extends Widget>(BuildContext context, T page) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => page)
+    );
+  }
+
 }
 
 class MenuItem extends StatelessWidget {
