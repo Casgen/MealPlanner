@@ -35,7 +35,7 @@ class UsersMeals extends Table {
   TextColumn get name => text().withLength(min: 1, max: 100)();
 }
 
-class UsersConsumedMeals extends Table {
+class UsersPlannedMeals extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get userId => integer().references(Users, #id)();
   IntColumn get foodId => integer().references(Foods, #id)();

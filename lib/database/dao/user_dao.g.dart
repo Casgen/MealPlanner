@@ -8,4 +8,9 @@ mixin _$UsersDaoMixin on DatabaseAccessor<UMTEDatabase> {
   $FoodsTable get foods => attachedDatabase.foods;
   $UsersFavoriteFoodsTable get usersFavoriteFoods =>
       attachedDatabase.usersFavoriteFoods;
+  $UsersMealsTable get usersMeals => attachedDatabase.usersMeals;
+  $UsersPlannedMealsTable get usersPlannedMeals =>
+      attachedDatabase.usersPlannedMeals;
+  $UsersMealsIngredientsTable get usersMealsIngredients =>
+      attachedDatabase.usersMealsIngredients;
 }

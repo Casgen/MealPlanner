@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),
             title: const Text("Home")),
-        body: ListView(children: [MealsForDayCard(DateTime.now())]),
+        body: ListView(children: [PlannedMealsForDayCard(DateTime.now())]),
       );
     });
   }

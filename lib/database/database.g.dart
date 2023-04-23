@@ -1135,12 +1135,12 @@ class UsersMealsIngredientsCompanion
   }
 }
 
-class $UsersConsumedMealsTable extends UsersConsumedMeals
-    with TableInfo<$UsersConsumedMealsTable, UsersConsumedMeal> {
+class $UsersPlannedMealsTable extends UsersPlannedMeals
+    with TableInfo<$UsersPlannedMealsTable, UsersPlannedMeal> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $UsersConsumedMealsTable(this.attachedDatabase, [this._alias]);
+  $UsersPlannedMealsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -1187,7 +1187,7 @@ class $UsersConsumedMealsTable extends UsersConsumedMeals
       GeneratedColumn<String>('type_of_meal', aliasedName, false,
               type: DriftSqlType.string, requiredDuringInsert: true)
           .withConverter<TypeOfMeal>(
-              $UsersConsumedMealsTable.$convertertypeOfMeal);
+              $UsersPlannedMealsTable.$convertertypeOfMeal);
   static const VerificationMeta _amountMeta = const VerificationMeta('amount');
   @override
   late final GeneratedColumn<int> amount = GeneratedColumn<int>(
@@ -1209,11 +1209,11 @@ class $UsersConsumedMealsTable extends UsersConsumedMeals
   List<GeneratedColumn> get $columns =>
       [id, userId, foodId, usersMealId, date, typeOfMeal, amount, isChecked];
   @override
-  String get aliasedName => _alias ?? 'users_consumed_meals';
+  String get aliasedName => _alias ?? 'users_planned_meals';
   @override
-  String get actualTableName => 'users_consumed_meals';
+  String get actualTableName => 'users_planned_meals';
   @override
-  VerificationContext validateIntegrity(Insertable<UsersConsumedMeal> instance,
+  VerificationContext validateIntegrity(Insertable<UsersPlannedMeal> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -1263,9 +1263,9 @@ class $UsersConsumedMealsTable extends UsersConsumedMeals
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  UsersConsumedMeal map(Map<String, dynamic> data, {String? tablePrefix}) {
+  UsersPlannedMeal map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return UsersConsumedMeal(
+    return UsersPlannedMeal(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       userId: attachedDatabase.typeMapping
@@ -1276,7 +1276,7 @@ class $UsersConsumedMealsTable extends UsersConsumedMeals
           .read(DriftSqlType.int, data['${effectivePrefix}users_meal_id']),
       date: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
-      typeOfMeal: $UsersConsumedMealsTable.$convertertypeOfMeal.fromSql(
+      typeOfMeal: $UsersPlannedMealsTable.$convertertypeOfMeal.fromSql(
           attachedDatabase.typeMapping.read(
               DriftSqlType.string, data['${effectivePrefix}type_of_meal'])!),
       amount: attachedDatabase.typeMapping
@@ -1287,16 +1287,16 @@ class $UsersConsumedMealsTable extends UsersConsumedMeals
   }
 
   @override
-  $UsersConsumedMealsTable createAlias(String alias) {
-    return $UsersConsumedMealsTable(attachedDatabase, alias);
+  $UsersPlannedMealsTable createAlias(String alias) {
+    return $UsersPlannedMealsTable(attachedDatabase, alias);
   }
 
   static JsonTypeConverter2<TypeOfMeal, String, String> $convertertypeOfMeal =
       const EnumNameConverter<TypeOfMeal>(TypeOfMeal.values);
 }
 
-class UsersConsumedMeal extends DataClass
-    implements Insertable<UsersConsumedMeal> {
+class UsersPlannedMeal extends DataClass
+    implements Insertable<UsersPlannedMeal> {
   final int id;
   final int userId;
   final int foodId;
@@ -1305,7 +1305,7 @@ class UsersConsumedMeal extends DataClass
   final TypeOfMeal typeOfMeal;
   final int amount;
   final bool isChecked;
-  const UsersConsumedMeal(
+  const UsersPlannedMeal(
       {required this.id,
       required this.userId,
       required this.foodId,
@@ -1325,7 +1325,7 @@ class UsersConsumedMeal extends DataClass
     }
     map['date'] = Variable<DateTime>(date);
     {
-      final converter = $UsersConsumedMealsTable.$convertertypeOfMeal;
+      final converter = $UsersPlannedMealsTable.$convertertypeOfMeal;
       map['type_of_meal'] = Variable<String>(converter.toSql(typeOfMeal));
     }
     map['amount'] = Variable<int>(amount);
@@ -1333,8 +1333,8 @@ class UsersConsumedMeal extends DataClass
     return map;
   }
 
-  UsersConsumedMealsCompanion toCompanion(bool nullToAbsent) {
-    return UsersConsumedMealsCompanion(
+  UsersPlannedMealsCompanion toCompanion(bool nullToAbsent) {
+    return UsersPlannedMealsCompanion(
       id: Value(id),
       userId: Value(userId),
       foodId: Value(foodId),
@@ -1348,16 +1348,16 @@ class UsersConsumedMeal extends DataClass
     );
   }
 
-  factory UsersConsumedMeal.fromJson(Map<String, dynamic> json,
+  factory UsersPlannedMeal.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return UsersConsumedMeal(
+    return UsersPlannedMeal(
       id: serializer.fromJson<int>(json['id']),
       userId: serializer.fromJson<int>(json['userId']),
       foodId: serializer.fromJson<int>(json['foodId']),
       usersMealId: serializer.fromJson<int?>(json['usersMealId']),
       date: serializer.fromJson<DateTime>(json['date']),
-      typeOfMeal: $UsersConsumedMealsTable.$convertertypeOfMeal
+      typeOfMeal: $UsersPlannedMealsTable.$convertertypeOfMeal
           .fromJson(serializer.fromJson<String>(json['typeOfMeal'])),
       amount: serializer.fromJson<int>(json['amount']),
       isChecked: serializer.fromJson<bool>(json['isChecked']),
@@ -1373,13 +1373,13 @@ class UsersConsumedMeal extends DataClass
       'usersMealId': serializer.toJson<int?>(usersMealId),
       'date': serializer.toJson<DateTime>(date),
       'typeOfMeal': serializer.toJson<String>(
-          $UsersConsumedMealsTable.$convertertypeOfMeal.toJson(typeOfMeal)),
+          $UsersPlannedMealsTable.$convertertypeOfMeal.toJson(typeOfMeal)),
       'amount': serializer.toJson<int>(amount),
       'isChecked': serializer.toJson<bool>(isChecked),
     };
   }
 
-  UsersConsumedMeal copyWith(
+  UsersPlannedMeal copyWith(
           {int? id,
           int? userId,
           int? foodId,
@@ -1388,7 +1388,7 @@ class UsersConsumedMeal extends DataClass
           TypeOfMeal? typeOfMeal,
           int? amount,
           bool? isChecked}) =>
-      UsersConsumedMeal(
+      UsersPlannedMeal(
         id: id ?? this.id,
         userId: userId ?? this.userId,
         foodId: foodId ?? this.foodId,
@@ -1400,7 +1400,7 @@ class UsersConsumedMeal extends DataClass
       );
   @override
   String toString() {
-    return (StringBuffer('UsersConsumedMeal(')
+    return (StringBuffer('UsersPlannedMeal(')
           ..write('id: $id, ')
           ..write('userId: $userId, ')
           ..write('foodId: $foodId, ')
@@ -1419,7 +1419,7 @@ class UsersConsumedMeal extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is UsersConsumedMeal &&
+      (other is UsersPlannedMeal &&
           other.id == this.id &&
           other.userId == this.userId &&
           other.foodId == this.foodId &&
@@ -1430,7 +1430,7 @@ class UsersConsumedMeal extends DataClass
           other.isChecked == this.isChecked);
 }
 
-class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
+class UsersPlannedMealsCompanion extends UpdateCompanion<UsersPlannedMeal> {
   final Value<int> id;
   final Value<int> userId;
   final Value<int> foodId;
@@ -1439,7 +1439,7 @@ class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
   final Value<TypeOfMeal> typeOfMeal;
   final Value<int> amount;
   final Value<bool> isChecked;
-  const UsersConsumedMealsCompanion({
+  const UsersPlannedMealsCompanion({
     this.id = const Value.absent(),
     this.userId = const Value.absent(),
     this.foodId = const Value.absent(),
@@ -1449,7 +1449,7 @@ class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
     this.amount = const Value.absent(),
     this.isChecked = const Value.absent(),
   });
-  UsersConsumedMealsCompanion.insert({
+  UsersPlannedMealsCompanion.insert({
     this.id = const Value.absent(),
     required int userId,
     required int foodId,
@@ -1464,7 +1464,7 @@ class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
         typeOfMeal = Value(typeOfMeal),
         amount = Value(amount),
         isChecked = Value(isChecked);
-  static Insertable<UsersConsumedMeal> custom({
+  static Insertable<UsersPlannedMeal> custom({
     Expression<int>? id,
     Expression<int>? userId,
     Expression<int>? foodId,
@@ -1486,7 +1486,7 @@ class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
     });
   }
 
-  UsersConsumedMealsCompanion copyWith(
+  UsersPlannedMealsCompanion copyWith(
       {Value<int>? id,
       Value<int>? userId,
       Value<int>? foodId,
@@ -1495,7 +1495,7 @@ class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
       Value<TypeOfMeal>? typeOfMeal,
       Value<int>? amount,
       Value<bool>? isChecked}) {
-    return UsersConsumedMealsCompanion(
+    return UsersPlannedMealsCompanion(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       foodId: foodId ?? this.foodId,
@@ -1526,7 +1526,7 @@ class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
       map['date'] = Variable<DateTime>(date.value);
     }
     if (typeOfMeal.present) {
-      final converter = $UsersConsumedMealsTable.$convertertypeOfMeal;
+      final converter = $UsersPlannedMealsTable.$convertertypeOfMeal;
       map['type_of_meal'] = Variable<String>(converter.toSql(typeOfMeal.value));
     }
     if (amount.present) {
@@ -1540,7 +1540,7 @@ class UsersConsumedMealsCompanion extends UpdateCompanion<UsersConsumedMeal> {
 
   @override
   String toString() {
-    return (StringBuffer('UsersConsumedMealsCompanion(')
+    return (StringBuffer('UsersPlannedMealsCompanion(')
           ..write('id: $id, ')
           ..write('userId: $userId, ')
           ..write('foodId: $foodId, ')
@@ -1774,8 +1774,8 @@ abstract class _$UMTEDatabase extends GeneratedDatabase {
   late final $UsersMealsTable usersMeals = $UsersMealsTable(this);
   late final $UsersMealsIngredientsTable usersMealsIngredients =
       $UsersMealsIngredientsTable(this);
-  late final $UsersConsumedMealsTable usersConsumedMeals =
-      $UsersConsumedMealsTable(this);
+  late final $UsersPlannedMealsTable usersPlannedMeals =
+      $UsersPlannedMealsTable(this);
   late final $UsersFavoriteFoodsTable usersFavoriteFoods =
       $UsersFavoriteFoodsTable(this);
   late final FoodsDao foodsDao = FoodsDao(this as UMTEDatabase);
@@ -1789,7 +1789,7 @@ abstract class _$UMTEDatabase extends GeneratedDatabase {
         users,
         usersMeals,
         usersMealsIngredients,
-        usersConsumedMeals,
+        usersPlannedMeals,
         usersFavoriteFoods
       ];
 }

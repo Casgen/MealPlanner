@@ -5,7 +5,7 @@ import 'package:umte_project/database/database.dart';
 import 'amount_counter.dart';
 
 class Nutrition extends StatefulWidget {
-  Nutrition({
+  const Nutrition({
     super.key,
     required this.food,
   });

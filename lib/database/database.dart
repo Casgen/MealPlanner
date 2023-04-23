@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:umte_project/data/enums/type_of_meal.dart';
@@ -18,7 +17,7 @@ part "database.g.dart";
 bool inDevelopment = true;
 
 @DriftDatabase(
-  tables: [Foods, Users, UsersMeals, UsersMealsIngredients, UsersConsumedMeals, UsersFavoriteFoods],
+  tables: [Foods, Users, UsersMeals, UsersMealsIngredients, UsersPlannedMeals, UsersFavoriteFoods],
   daos: [FoodsDao, UsersDao]
 )
 class UMTEDatabase extends _$UMTEDatabase {

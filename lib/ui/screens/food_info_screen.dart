@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:umte_project/services/user_service.dart';
+import 'package:umte_project/ui/dialogs/add_meal_dialog.dart';
 import '../../database/database.dart';
 import '../components/buttons/icon_toggle_button.dart';
 import '../components/food/nutrition.dart';
@@ -93,14 +94,17 @@ class _FoodInfoScreenState extends State<FoodInfoScreen> {
                 const Spacer(),
                 IconToggleButton(
                   initialValue: snapshot.data ?? false,
-                  isToggledIcon: const Icon(Icons.favorite_rounded, color: Colors.pinkAccent, size: 30,),
-                  notToggledIcon: const Icon(Icons.favorite_border_rounded, color: Colors.pinkAccent, size: 30),
+                  isToggledIcon: Icon(Icons.favorite_rounded, color: theme.colorScheme.onPrimary, size: 30,),
+                  notToggledIcon: Icon(Icons.favorite_border_rounded, color: theme.colorScheme.onPrimary, size: 30),
                   onChanged: onLike,
                 ),
                 IconButton(
-                  onPressed: onAdd,
-                  icon: const Icon(Icons.add_circle_rounded,
-                      size: 30, color: Colors.orangeAccent),
+                  onPressed: () => showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AddMealDialog(food: widget.food, dateTime: DateTime.now())
+                  ),
+                  icon: Icon(Icons.add,
+                      size: 30, color: theme.colorScheme.onPrimary),
                 )
               ],
             )
@@ -143,7 +147,4 @@ class _FoodInfoScreenState extends State<FoodInfoScreen> {
     }
   }
 
-  void onAdd() {
-
-  }
 }

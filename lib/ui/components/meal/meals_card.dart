@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:umte_project/data/enums/type_of_meal.dart';
+import 'package:umte_project/database/tables.dart';
+import 'package:umte_project/services/foods_service.dart';
+import 'package:umte_project/services/user_service.dart';
 
+import '../../../database/database.dart';
 import 'meal_item.dart';
 
 class MealsCard extends StatefulWidget{
 
-  const MealsCard({super.key, required this.typeOfMeal});
+  MealsCard({
+    super.key,
+    required this.typeOfMeal,
+    required this.usersPlannedMeal,
+  });
 
   final TypeOfMeal typeOfMeal;
+  final UserService userService = Get.find<UserService>();
+  final FoodsService foodsService = Get.find<FoodsService>();
+  final List<UsersPlannedMeal> usersPlannedMeal;
 
   @override
   State<MealsCard> createState() => _MealsCard();
@@ -29,41 +41,47 @@ class _MealsCard extends State<MealsCard> {
     return Card(
       color: colorScheme.onSecondary,
       child: Padding(
-        padding: EdgeInsetsDirectional.all(8.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text(widget.typeOfMeal.getName(), style: style),
-                const Spacer(),
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isExpanded = !_isExpanded;
-                      });
-                    },
-                    icon: const Icon(Icons.menu_rounded)
-                )
-              ],
-            ),
-            Column(children: generateMealItems(_isExpanded))
-          ],
+        padding: const EdgeInsetsDirectional.all(8.0),
+        child: AnimatedContainer(
+          duration: const Duration(seconds: 1),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(widget.typeOfMeal.getName(), style: style),
+                  const Spacer(),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _isExpanded = !_isExpanded;
+                        });
+                      },
+                      icon: const Icon(Icons.menu_rounded)
+                  )
+                ],
+              ),
+              if (_isExpanded) Column(children: generateMealItems(),)
+            ],
+          ),
         ),
       ),
     );
 
   }
 
-  List<Widget> generateMealItems(bool isExpanded) {
-      List<MealItem> mealItems = [
-        MealItem(mealName: "Banana", amount: 3),
-        MealItem(mealName: "Strawberries", amount: 2),
-      ];
+  List<Widget> generateMealItems() {
+    List<Widget> mealItems = [];
 
-      if (isExpanded) {
-          return mealItems;
-      }
-      return List.empty();
+    if (widget.usersPlannedMeal.isEmpty) {
+      mealItems.add(const Center(child: Text("Nothing to see here...")));
+      return mealItems;
+    }
+
+    for (UsersPlannedMeal plannedMeal in widget.usersPlannedMeal) {
+      mealItems.add(MealItem(usersPlannedMeal: plannedMeal));
+    }
+
+    return mealItems;
   }
 
 }

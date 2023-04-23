@@ -11,8 +11,12 @@ class FoodsService {
     return await _foodsDao.findByQuery(query);
   }
 
-  Future<Food> getFood(int foodId) {
+  Future<Food?> getFoodById(int foodId) {
     return _foodsDao.findById(foodId);
+  }
+  
+  Future<List<Food>> getAllFoodsByIds(List<int> foodIds) {
+    return _foodsDao.findAllByFoodIds(foodIds);
   }
 
 }
