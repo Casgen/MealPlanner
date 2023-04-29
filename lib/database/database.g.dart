@@ -1780,6 +1780,9 @@ abstract class _$UMTEDatabase extends GeneratedDatabase {
       $UsersFavoriteFoodsTable(this);
   late final FoodsDao foodsDao = FoodsDao(this as UMTEDatabase);
   late final UsersDao usersDao = UsersDao(this as UMTEDatabase);
+  late final UsersMealsDao usersMealsDao = UsersMealsDao(this as UMTEDatabase);
+  late final UsersMealsIngredientsDao usersMealsIngredientsDao =
+      UsersMealsIngredientsDao(this as UMTEDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();

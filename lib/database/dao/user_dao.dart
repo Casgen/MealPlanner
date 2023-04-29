@@ -87,6 +87,10 @@ class UsersDao extends DatabaseAccessor<UMTEDatabase> with _$UsersDaoMixin {
   Future<List<UsersMeal>> findAllUsersMealsByIds(List<int> usersMealIds) {
     return (select(usersMeals)..where((tbl) => tbl.id.isIn(usersMealIds))).get();
   }
+
+  Future<List<UsersMeal>> findAllUsersMealsByUserId(int userId) async {
+    return (select(usersMeals)..where((tbl) => tbl.userId.equals(userId))).get();
+  }
   
   Future<UsersMeal?> findUsersMealById(int usersMealId) {
     return (select(usersMeals)..where((tbl) => tbl.id.equals(usersMealId))).getSingleOrNull();
@@ -122,5 +126,6 @@ class UsersDao extends DatabaseAccessor<UMTEDatabase> with _$UsersDaoMixin {
   Future<bool> updateUsersPlannedMeal(UsersPlannedMeal usersPlannedMeal) {
     return update(usersPlannedMeals).replace(usersPlannedMeal);
   }
+
 
 }

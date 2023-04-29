@@ -12,7 +12,7 @@ class SearchFoodsScreen extends StatefulWidget {
   const SearchFoodsScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _SearchFoodsScreen();
+  State<SearchFoodsScreen> createState() => _SearchFoodsScreen();
 }
 
 class _SearchFoodsScreen extends State<SearchFoodsScreen> {
@@ -25,13 +25,11 @@ class _SearchFoodsScreen extends State<SearchFoodsScreen> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    TextStyle textFieldStyle = theme.textTheme.titleMedium!.copyWith(
-      color: theme.colorScheme.onPrimary
-    );
+    TextStyle textFieldStyle = theme.textTheme.titleMedium!
+        .copyWith(color: theme.colorScheme.onPrimary);
 
-    TextStyle labelStyle = theme.textTheme.titleMedium!.copyWith(
-        color: theme.colorScheme.onPrimary.withAlpha(128)
-    );
+    TextStyle labelStyle = theme.textTheme.titleMedium!
+        .copyWith(color: theme.colorScheme.onPrimary.withAlpha(128));
 
     return LayoutBuilder(builder: (builder, constraints) {
       return Scaffold(
@@ -45,28 +43,26 @@ class _SearchFoodsScreen extends State<SearchFoodsScreen> {
               padding: const EdgeInsets.all(4.0),
               child: TextField(
                 style: textFieldStyle,
-                  onChanged: timeoutSearch,
+                onChanged: timeoutSearch,
                 decoration: InputDecoration(
-                  iconColor: theme.colorScheme.onPrimary,
-                  icon: const Icon(Icons.search),
-                  border: const UnderlineInputBorder(),
-                  labelStyle: labelStyle,
-                  labelText: "Search..."
-                ),
+                    iconColor: theme.colorScheme.onPrimary,
+                    icon: const Icon(Icons.search),
+                    border: const UnderlineInputBorder(),
+                    labelStyle: labelStyle,
+                    labelText: "Search..."),
               ),
-            )
-        ),
+            )),
         body: showProgress
             ? const Center(child: CircularProgressIndicator())
             : ListView(
                 children: List.generate(foundFoods.length, (index) {
                   return ListTile(
-                      title: Text(foundFoods[index].name),
-                      onTap: () {
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => FoodInfoScreen(food: foundFoods[index]))
-                        );
-                      },
+                    title: Text(foundFoods[index].name),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              FoodInfoScreen(food: foundFoods[index])));
+                    },
                   );
                 }),
               ),

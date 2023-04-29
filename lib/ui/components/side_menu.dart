@@ -1,11 +1,9 @@
 import 'package:drift_db_viewer/drift_db_viewer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:umte_project/database/database.dart';
 import 'package:umte_project/ui/screens/hydration_screen.dart';
-import 'package:umte_project/ui/screens/login_screen.dart';
+import 'package:umte_project/ui/screens/your_meals_screen.dart';
 
 import '../screens/search_foods_screen.dart';
 import '../screens/home_screen.dart';
@@ -32,7 +30,7 @@ class SideMenu extends StatelessWidget {
           MenuItem(text: "Home", icon: Icons.home, onTap: () => navigateTo(context, HomeScreen())),
           MenuItem(text: "Foods", icon: Icons.restaurant_rounded, onTap: () => navigateTo(context, SearchFoodsScreen())),
           MenuItem(text: "Hydration", icon: Icons.water_drop, onTap: () => navigateTo(context, const HydrationScreen())),
-          MenuItem(text: "Your meals",icon: Icons.menu_book, onTap: () {}),
+          MenuItem(text: "Your meals",icon: Icons.menu_book, onTap: () => navigateTo(context, YourMealsScreen())),
           MenuItem(
               text: "Database",
               icon: Icons.data_array,

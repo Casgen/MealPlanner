@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
@@ -7,15 +6,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:umte_project/data/enums/response_enum.dart';
 import 'package:umte_project/data/enums/type_of_meal.dart';
 import 'package:umte_project/database/dao/user_dao.dart';
+import 'package:umte_project/database/dao/users_meals_ingredients_dao.dart';
 import 'package:umte_project/database/database.dart';
+import 'package:umte_project/database/tables.dart';
 
 import '../database/dao/foods_dao.dart';
 
 class UserService {
-
   final UsersDao _usersDao = Get.find<UMTEDatabase>().usersDao;
   final FoodsDao _foodsDao = Get.find<UMTEDatabase>().foodsDao;
-
+  final UsersMealsIngredientsDao _usersMealsIngredientsDao =
+      Get.find<UMTEDatabase>().usersMealsIngredientsDao;
 
   Future<void> registerUser(String username, String password) async {
     await _usersDao.addUser(username, _hashString(password));
@@ -57,72 +58,104 @@ class UserService {
   }
 
   Future<bool> isLoggedInUsersFoodFavorite(int foodId) async {
-      int userId = await _obtainUserId();
-      return (await _usersDao.findFavoriteFoodByUserIdAndFoodId(userId, foodId)) != null;
+    int userId = await _obtainUserId();
+    return (await _usersDao.findFavoriteFoodByUserIdAndFoodId(
+            userId, foodId)) !=
+        null;
   }
 
   Future<List<Food>> getUsersFavoriteFoods(int userId) async {
-    List<UsersFavoriteFood> usersFavoriteFoods = await _usersDao.findAllFavoriteFoodsByUserId(userId);
+    List<UsersFavoriteFood> usersFavoriteFoods =
+        await _usersDao.findAllFavoriteFoodsByUserId(userId);
 
     List<int> foodIds = usersFavoriteFoods.map((e) => e.foodId).toList();
 
     return await _foodsDao.findAllByFoodIds(foodIds);
   }
 
-  Future<List<UsersPlannedMeal>> getLoggedInUsersPlannedMealsByWeekday(DateTime dateTime, TypeOfMeal typeOfMeal) async {
+  Future<List<UsersPlannedMeal>> getLoggedInUsersPlannedMealsByWeekday(
+      DateTime dateTime, TypeOfMeal typeOfMeal) async {
     int userId = await _obtainUserId();
-    return await _usersDao.findAllUsersPlannedMealsByIdAndDateTimeAndWeekday(userId, dateTime, typeOfMeal);
+    return await _usersDao.findAllUsersPlannedMealsByIdAndDateTimeAndWeekday(
+        userId, dateTime, typeOfMeal);
   }
 
-  Future<List<UsersPlannedMeal>> getLoggedInUsersPlannedMeals(DateTime dateTime) async {
+  Future<List<UsersPlannedMeal>> getLoggedInUsersPlannedMeals(
+      DateTime dateTime) async {
     int userId = await _obtainUserId();
-    return await _usersDao.findAllUsersPlannedMealsByIdAndDateTime(userId, dateTime);
+    return await _usersDao.findAllUsersPlannedMealsByIdAndDateTime(
+        userId, dateTime);
   }
 
-  Future<List<Food>> getLoggedInUsersPlannedFoods(DateTime dateTime, TypeOfMeal typeOfMeal) async {
+  Future<List<Food>> getLoggedInUsersPlannedFoods(
+      DateTime dateTime, TypeOfMeal typeOfMeal) async {
     int userId = await _obtainUserId();
-    List<UsersPlannedMeal> usersPlannedMeals = await _usersDao.findAllUsersPlannedMealsByIdAndDateTimeAndWeekday(userId, dateTime, typeOfMeal);
-    
-    List<int> foodIds = usersPlannedMeals
-        .map((e) => e.foodId)
-        .whereType<int>()
-        .toList();
-    
+    List<UsersPlannedMeal> usersPlannedMeals =
+        await _usersDao.findAllUsersPlannedMealsByIdAndDateTimeAndWeekday(
+            userId, dateTime, typeOfMeal);
+
+    List<int> foodIds =
+        usersPlannedMeals.map((e) => e.foodId).whereType<int>().toList();
+
     return await _foodsDao.findAllByFoodIds(foodIds);
   }
 
   Future<List<UsersMeal>> getAllUsersMealsById(List<int> usersMealIds) {
     return _usersDao.findAllUsersMealsByIds(usersMealIds);
   }
-  
+
   Future<UsersMeal?> getUsersMealById(int usersMealId) {
     return _usersDao.findUsersMealById(usersMealId);
   }
-  
 
-  Future<List<UsersMeal>> getLoggedInUsersOwnPlannedMeals(DateTime dateTime, TypeOfMeal typeOfMeal) async {
-    List<UsersPlannedMeal> usersPlannedMeals = await getLoggedInUsersPlannedMealsByWeekday(dateTime, typeOfMeal);
+  Future<List<UsersMeal>> getLoggedInUsersOwnPlannedMeals(
+      DateTime dateTime, TypeOfMeal typeOfMeal) async {
+    List<UsersPlannedMeal> usersPlannedMeals =
+        await getLoggedInUsersPlannedMealsByWeekday(dateTime, typeOfMeal);
 
-    List<int> usersMealIds = usersPlannedMeals
-        .map((e) => e.usersMealId)
-        .whereType<int>()
-        .toList();
+    List<int> usersMealIds =
+        usersPlannedMeals.map((e) => e.usersMealId).whereType<int>().toList();
 
     return await _usersDao.findAllUsersMealsByIds(usersMealIds);
   }
 
-  Future<void> addFoodAsPlanned(int foodId, DateTime dateTime, TypeOfMeal typeOfMeal, int? amount) async {
+  Future<List<UsersMeal>> getLoggedInUsersMeals() async {
     int userId = await _obtainUserId();
-    amount ??= 1;
 
-    _usersDao.saveUsersPlannedFoodToADay(userId, foodId, dateTime, typeOfMeal, amount);
+    return await _usersDao.findAllUsersMealsByUserId(userId);
   }
 
-  Future<void> addUsersMealAsPlanned(int foodId, DateTime dateTime, TypeOfMeal typeOfMeal, int? amount) async {
+  Future<void> addFoodAsPlanned(
+      int foodId, DateTime dateTime, TypeOfMeal typeOfMeal, int? amount) async {
     int userId = await _obtainUserId();
     amount ??= 1;
 
-    _usersDao.saveUsersPlannedMealToADay(userId, foodId, dateTime, typeOfMeal, amount);
+    _usersDao.saveUsersPlannedFoodToADay(
+        userId, foodId, dateTime, typeOfMeal, amount);
+  }
+
+  Future<void> addUsersMealAsPlanned(
+      int foodId, DateTime dateTime, TypeOfMeal typeOfMeal, int? amount) async {
+    int userId = await _obtainUserId();
+    amount ??= 1;
+
+    _usersDao.saveUsersPlannedMealToADay(
+        userId, foodId, dateTime, typeOfMeal, amount);
+  }
+
+  Future<List<Food>> getFoodsFromUsersMeal(int usersMealId) async {
+    List<UsersMealsIngredient> usersMealsIngredients =
+        await _usersMealsIngredientsDao
+            .findAllIngredientsByUsersMealId(usersMealId);
+
+    List<int> foodIds =
+        usersMealsIngredients.map((ingredient) => ingredient.foodId).toList();
+
+    return _foodsDao.findAllByFoodIds(foodIds);
+  }
+
+  Future<List<UsersMealsIngredient>> getIngredientsFromUsersMeal(int usersMealId) async {
+    return _usersMealsIngredientsDao.findAllIngredientsByUsersMealId(usersMealId);
   }
 
   Future<int> _obtainUserId() async {
@@ -137,7 +170,4 @@ class UserService {
 
     return hash.toString();
   }
-
-
-
 }

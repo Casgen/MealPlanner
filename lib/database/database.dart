@@ -4,9 +4,10 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:umte_project/data/enums/type_of_meal.dart';
 import 'package:umte_project/database/dao/foods_dao.dart';
 import 'package:umte_project/database/dao/user_dao.dart';
+import 'package:umte_project/database/dao/users_meals_dao.dart';
+import 'package:umte_project/database/dao/users_meals_ingredients_dao.dart';
 import 'package:umte_project/database/data.dart';
 import 'package:umte_project/database/tables.dart';
 
@@ -18,7 +19,7 @@ bool inDevelopment = true;
 
 @DriftDatabase(
   tables: [Foods, Users, UsersMeals, UsersMealsIngredients, UsersPlannedMeals, UsersFavoriteFoods],
-  daos: [FoodsDao, UsersDao]
+  daos: [FoodsDao, UsersDao, UsersMealsDao, UsersMealsIngredientsDao]
 )
 class UMTEDatabase extends _$UMTEDatabase {
 
