@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:umte_project/data/enums/type_of_meal.dart';
 
@@ -24,15 +23,17 @@ class _TypeOfMealDropDownMenu extends State<TypeOfMealDropDownMenu> {
   @override
   Widget build(BuildContext context) {
 
-    final List<DropdownMenuEntry<TypeOfMeal>> typeOfMealEntries = TypeOfMeal.values.map((e) {
-      return DropdownMenuEntry<TypeOfMeal>(value: e, label: e.getName());
+    final List<DropdownMenuItem<TypeOfMeal>> typeOfMealItems = TypeOfMeal.values.map((e) {
+      return DropdownMenuItem<TypeOfMeal>(
+          value: e,
+          child: Text(e.getName()),
+        );
     }).toList();
 
-    return DropdownMenu<TypeOfMeal>(
-      controller: typeOfMealController,
-      label: const Text("Type of meal"),
-      dropdownMenuEntries: typeOfMealEntries,
-      onSelected: (typeOfMeal) {
+    return DropdownButton(
+      items: typeOfMealItems,
+      value: selectedTypeOfMeal,
+      onChanged: (typeOfMeal) {
         setState(() {
           selectedTypeOfMeal = typeOfMeal;
         });

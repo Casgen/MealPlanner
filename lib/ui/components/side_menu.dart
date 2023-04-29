@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:umte_project/database/database.dart';
-import 'package:umte_project/ui/components/meal/meal_widget.dart';
 import 'package:umte_project/ui/screens/hydration_screen.dart';
 import 'package:umte_project/ui/screens/login_screen.dart';
 
@@ -32,8 +31,6 @@ class SideMenu extends StatelessWidget {
           ),
           MenuItem(text: "Home", icon: Icons.home, onTap: () => navigateTo(context, HomeScreen())),
           MenuItem(text: "Foods", icon: Icons.restaurant_rounded, onTap: () => navigateTo(context, SearchFoodsScreen())),
-          MenuItem(text: "Login", icon: Icons.account_circle_outlined, onTap: () => navigateTo(context, const LoginPage())),
-          MenuItem(text: "Food Menu", icon: Icons.restaurant_menu, onTap: () {}),
           MenuItem(text: "Hydration", icon: Icons.water_drop, onTap: () => navigateTo(context, const HydrationScreen())),
           MenuItem(text: "Your meals",icon: Icons.menu_book, onTap: () {}),
           MenuItem(

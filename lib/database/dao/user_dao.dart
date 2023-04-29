@@ -44,12 +44,16 @@ class UsersDao extends DatabaseAccessor<UMTEDatabase> with _$UsersDaoMixin {
   }
 
   Future<List<UsersPlannedMeal>> findAllUsersPlannedMealsByIdAndDateTimeAndWeekday(int userId, DateTime dateTime, TypeOfMeal typeOfMeal) {
+    int day = dateTime.day;
+    int month = dateTime.month;
+    int year = dateTime.year;
+
     return (select(usersPlannedMeals)..where((tbl) =>
       tbl.userId.equals(userId) &
       tbl.date.day.equals(dateTime.day) &
       tbl.date.month.equals(dateTime.month) &
       tbl.date.year.equals(dateTime.year) &
-      tbl.typeOfMeal.equals(typeOfMeal.toString())
+      tbl.typeOfMeal.equals(typeOfMeal.getName())
     )).get();
   }
 

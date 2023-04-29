@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:umte_project/ui/components/meal/meals_for_day_card.dart';
+import 'package:umte_project/ui/components/meal/menu.dart';
 import 'package:umte_project/ui/components/side_menu.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),
             title: const Text("Home")),
-        body: ListView(children: [PlannedMealsForDayCard(DateTime.now())]),
+        body: ListView(children: [Menu(DateTime.now())]),
       );
     });
   }

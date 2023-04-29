@@ -34,12 +34,11 @@ class _LoginPage extends State<LoginPage> {
 
     return LayoutBuilder(builder: (builder, constraints) {
       return Scaffold(
-        drawer: const SideMenu(),
         appBar: AppBar(
             backgroundColor: theme.primaryColor,
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),
-            title: const Text("Home")),
+            title: const Text("Login")),
         body: Center(
           child: Form(
             key: _formKey,
@@ -54,6 +53,7 @@ class _LoginPage extends State<LoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextFormField(
+                        textInputAction: TextInputAction.next,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Username",
@@ -67,6 +67,7 @@ class _LoginPage extends State<LoginPage> {
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
+                        textInputAction: TextInputAction.done,
                         obscureText: true,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
@@ -85,19 +86,7 @@ class _LoginPage extends State<LoginPage> {
                         children: [
                           const Text("Don't have an account? "),
                           GestureDetector(
-                            onTap: () async {
-                              final result = await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const RegisterPage()));
-
-                              if (!mounted) return;
-
-                              ScaffoldMessenger.of(context)
-                                ..removeCurrentSnackBar()
-                                ..showSnackBar(
-                                    SnackBar(content: Text("$result")));
-                            },
+                            onTap: _onSignUp,
                             child: Text(
                               "Sign up!",
                               style: signUpStyle,
@@ -127,6 +116,17 @@ class _LoginPage extends State<LoginPage> {
         ),
       );
     });
+  }
+
+  Future<void> _onSignUp() async {
+    final result = await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const RegisterPage()));
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text("$result")));
   }
 
   Future<void> onLogin(BuildContext context) async {

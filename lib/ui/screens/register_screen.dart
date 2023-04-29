@@ -30,12 +30,11 @@ class _RegisterPage extends State<RegisterPage> {
 
     return LayoutBuilder(builder: (builder, constraints) {
       return Scaffold(
-        drawer: const SideMenu(),
         appBar: AppBar(
             backgroundColor: theme.primaryColor,
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),
-            title: const Text("Home")),
+            title: const Text("Sign up")),
         body: Center(
           child: Form(
             key: _formKey,
@@ -50,6 +49,7 @@ class _RegisterPage extends State<RegisterPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextFormField(
+                        textInputAction: TextInputAction.next,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Username",
@@ -65,6 +65,7 @@ class _RegisterPage extends State<RegisterPage> {
                         height: 20,
                       ),
                       TextFormField(
+                        textInputAction: TextInputAction.next,
                         obscureText: true,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
@@ -81,6 +82,7 @@ class _RegisterPage extends State<RegisterPage> {
                         height: 20,
                       ),
                       TextFormField(
+                        textInputAction: TextInputAction.done,
                         obscureText: true,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
