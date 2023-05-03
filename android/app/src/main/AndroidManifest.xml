@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.umte_project">
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"></uses-permission>
+
    <application
         android:label="umte_project"
         android:name="${applicationName}"

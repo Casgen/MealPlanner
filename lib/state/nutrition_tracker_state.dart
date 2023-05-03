@@ -3,13 +3,15 @@ import 'package:get/get.dart';
 import 'package:umte_project/database/database.dart';
 import 'package:umte_project/services/user_service.dart';
 
-class NutritionTrackerState extends ChangeNotifier {
+class MenuState extends ChangeNotifier {
   List<Food> consumedFoods;
   List<UsersMeal> consumedMeals;
 
   Map<String, int> mapAmounts;
 
   UserService userService = Get.find<UserService>();
+
+  DateTime dateTime;
 
   double fiber = 0.0;
   double carbohydrates = 0.0;
@@ -22,10 +24,11 @@ class NutritionTrackerState extends ChangeNotifier {
   double sugarsDenum = 30.0;
   double caloriesDenum = 2200.0;
 
-  NutritionTrackerState()
+  MenuState()
       : consumedFoods = [],
         consumedMeals = [],
-        mapAmounts = {} ;
+        mapAmounts = {},
+        dateTime = DateTime.now();
 
   void addConsumedFood(Food food, int amount) {
     consumedFoods.add(food);

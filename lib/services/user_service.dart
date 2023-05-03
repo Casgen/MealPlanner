@@ -77,7 +77,7 @@ class UserService {
     double fatsSum = fatsArray.reduce((value, element) => value + element);
     double caloriesSum = caloriesArray.reduce((value, element) => value + element);
     
-    _usersDao.updateUsersMealNutrition(usersMealId, carbohydratesSum, fibreSum, sugarsSum, caloriesSum, fatsSum);
+    return _usersDao.updateUsersMealNutrition(usersMealId, carbohydratesSum, fibreSum, sugarsSum, caloriesSum, fatsSum);
   }
 
   Future<void> createNewUsersMeal(String name) async {
@@ -95,6 +95,12 @@ class UserService {
     return _usersDao.removeFavoriteFood(userId, foodId);
   }
 
+  Future<void> removeUsersMealIngredient(UsersMealsIngredient usersMealIngredient) async {
+    await _usersDao.deleteUsersMealIngredientById(usersMealIngredient.id);
+
+    return _updateUsersMealNutritionsById(usersMealIngredient.userMealId);
+  }
+
   Future<bool> isLoggedInUsersFoodFavorite(int foodId) async {
     int userId = await _obtainUserId();
 
@@ -102,13 +108,13 @@ class UserService {
     return favoriteFood != null;
   }
 
-  Future<List<Food>> getUsersFavoriteFoods(int userId) async {
-    List<UsersFavoriteFood> usersFavoriteFoods =
-        await _usersDao.findAllFavoriteFoodsByUserId(userId);
+  Future<List<Food>> getLoggedInUsersFavoriteFoods() async {
+    int userId = await _obtainUserId();
 
+    List<UsersFavoriteFood> usersFavoriteFoods = await _usersDao.findAllFavoriteFoodsByUserId(userId);
     List<int> foodIds = usersFavoriteFoods.map((e) => e.foodId).toList();
 
-    return await _foodsDao.findAllByFoodIds(foodIds);
+    return _foodsDao.findAllByFoodIds(foodIds);
   }
 
   Future<List<UsersPlannedMeal>> getLoggedInUsersPlannedMealsByWeekday(
@@ -125,6 +131,7 @@ class UserService {
         userId, dateTime);
   }
 
+
   Future<List<Food>> getLoggedInUsersPlannedFoods(
       DateTime dateTime, TypeOfMeal typeOfMeal) async {
     int userId = await _obtainUserId();
@@ -136,6 +143,11 @@ class UserService {
         usersPlannedMeals.map((e) => e.foodId).whereType<int>().toList();
 
     return await _foodsDao.findAllByFoodIds(foodIds);
+  }
+
+
+  Future<void> removeUsersPlannedMeal(UsersPlannedMeal usersPlannedMeal) async {
+    return _usersDao.removeUsersPlannedMealById(usersPlannedMeal.id);
   }
 
   Future<List<UsersMeal>> getAllUsersMealsById(List<int> usersMealIds) {
@@ -163,8 +175,7 @@ class UserService {
     return await _usersDao.findAllUsersMealsByUserId(userId);
   }
 
-  Future<void> addFoodAsPlanned(
-      int foodId, DateTime dateTime, TypeOfMeal typeOfMeal, int? amount) async {
+  Future<void> addFoodAsPlanned(int foodId, DateTime dateTime,TypeOfMeal typeOfMeal, int? amount) async {
     int userId = await _obtainUserId();
     amount ??= 1;
 
@@ -172,13 +183,11 @@ class UserService {
         userId, foodId, dateTime, typeOfMeal, amount);
   }
 
-  Future<void> addUsersMealAsPlanned(
-      int foodId, DateTime dateTime, TypeOfMeal typeOfMeal, int? amount) async {
+  Future<void> addUsersMealAsPlanned(int foodId, DateTime dateTime, TypeOfMeal typeOfMeal, int? amount) async {
     int userId = await _obtainUserId();
     amount ??= 1;
 
-    _usersDao.saveUsersPlannedMealToADay(
-        userId, foodId, dateTime, typeOfMeal, amount);
+    _usersDao.saveUsersPlannedMealToADay(userId, foodId, dateTime, typeOfMeal, amount);
   }
 
   Future<List<Food>> getFoodsFromUsersMeal(int usersMealId) async {

@@ -43,7 +43,7 @@ class UsersMeals extends Table {
 class UsersPlannedMeals extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get userId => integer().references(Users, #id)();
-  IntColumn get foodId => integer().references(Foods, #id)();
+  IntColumn get foodId => integer().nullable().references(Foods, #id)();
   IntColumn get usersMealId => integer().nullable().references(UsersMeals, #id)();
   DateTimeColumn get date => dateTime()();
   TextColumn get typeOfMeal => textEnum<TypeOfMeal>()();

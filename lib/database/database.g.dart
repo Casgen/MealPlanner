@@ -1353,9 +1353,9 @@ class $UsersPlannedMealsTable extends UsersPlannedMeals
   static const VerificationMeta _foodIdMeta = const VerificationMeta('foodId');
   @override
   late final GeneratedColumn<int> foodId = GeneratedColumn<int>(
-      'food_id', aliasedName, false,
+      'food_id', aliasedName, true,
       type: DriftSqlType.int,
-      requiredDuringInsert: true,
+      requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES foods (id)'));
   static const VerificationMeta _usersMealIdMeta =
@@ -1421,8 +1421,6 @@ class $UsersPlannedMealsTable extends UsersPlannedMeals
     if (data.containsKey('food_id')) {
       context.handle(_foodIdMeta,
           foodId.isAcceptableOrUnknown(data['food_id']!, _foodIdMeta));
-    } else if (isInserting) {
-      context.missing(_foodIdMeta);
     }
     if (data.containsKey('users_meal_id')) {
       context.handle(
@@ -1463,7 +1461,7 @@ class $UsersPlannedMealsTable extends UsersPlannedMeals
       userId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}user_id'])!,
       foodId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}food_id'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}food_id']),
       usersMealId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}users_meal_id']),
       date: attachedDatabase.typeMapping
@@ -1491,7 +1489,7 @@ class UsersPlannedMeal extends DataClass
     implements Insertable<UsersPlannedMeal> {
   final int id;
   final int userId;
-  final int foodId;
+  final int? foodId;
   final int? usersMealId;
   final DateTime date;
   final TypeOfMeal typeOfMeal;
@@ -1500,7 +1498,7 @@ class UsersPlannedMeal extends DataClass
   const UsersPlannedMeal(
       {required this.id,
       required this.userId,
-      required this.foodId,
+      this.foodId,
       this.usersMealId,
       required this.date,
       required this.typeOfMeal,
@@ -1511,7 +1509,9 @@ class UsersPlannedMeal extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['user_id'] = Variable<int>(userId);
-    map['food_id'] = Variable<int>(foodId);
+    if (!nullToAbsent || foodId != null) {
+      map['food_id'] = Variable<int>(foodId);
+    }
     if (!nullToAbsent || usersMealId != null) {
       map['users_meal_id'] = Variable<int>(usersMealId);
     }
@@ -1529,7 +1529,8 @@ class UsersPlannedMeal extends DataClass
     return UsersPlannedMealsCompanion(
       id: Value(id),
       userId: Value(userId),
-      foodId: Value(foodId),
+      foodId:
+          foodId == null && nullToAbsent ? const Value.absent() : Value(foodId),
       usersMealId: usersMealId == null && nullToAbsent
           ? const Value.absent()
           : Value(usersMealId),
@@ -1546,7 +1547,7 @@ class UsersPlannedMeal extends DataClass
     return UsersPlannedMeal(
       id: serializer.fromJson<int>(json['id']),
       userId: serializer.fromJson<int>(json['userId']),
-      foodId: serializer.fromJson<int>(json['foodId']),
+      foodId: serializer.fromJson<int?>(json['foodId']),
       usersMealId: serializer.fromJson<int?>(json['usersMealId']),
       date: serializer.fromJson<DateTime>(json['date']),
       typeOfMeal: $UsersPlannedMealsTable.$convertertypeOfMeal
@@ -1561,7 +1562,7 @@ class UsersPlannedMeal extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'userId': serializer.toJson<int>(userId),
-      'foodId': serializer.toJson<int>(foodId),
+      'foodId': serializer.toJson<int?>(foodId),
       'usersMealId': serializer.toJson<int?>(usersMealId),
       'date': serializer.toJson<DateTime>(date),
       'typeOfMeal': serializer.toJson<String>(
@@ -1574,7 +1575,7 @@ class UsersPlannedMeal extends DataClass
   UsersPlannedMeal copyWith(
           {int? id,
           int? userId,
-          int? foodId,
+          Value<int?> foodId = const Value.absent(),
           Value<int?> usersMealId = const Value.absent(),
           DateTime? date,
           TypeOfMeal? typeOfMeal,
@@ -1583,7 +1584,7 @@ class UsersPlannedMeal extends DataClass
       UsersPlannedMeal(
         id: id ?? this.id,
         userId: userId ?? this.userId,
-        foodId: foodId ?? this.foodId,
+        foodId: foodId.present ? foodId.value : this.foodId,
         usersMealId: usersMealId.present ? usersMealId.value : this.usersMealId,
         date: date ?? this.date,
         typeOfMeal: typeOfMeal ?? this.typeOfMeal,
@@ -1625,7 +1626,7 @@ class UsersPlannedMeal extends DataClass
 class UsersPlannedMealsCompanion extends UpdateCompanion<UsersPlannedMeal> {
   final Value<int> id;
   final Value<int> userId;
-  final Value<int> foodId;
+  final Value<int?> foodId;
   final Value<int?> usersMealId;
   final Value<DateTime> date;
   final Value<TypeOfMeal> typeOfMeal;
@@ -1644,14 +1645,13 @@ class UsersPlannedMealsCompanion extends UpdateCompanion<UsersPlannedMeal> {
   UsersPlannedMealsCompanion.insert({
     this.id = const Value.absent(),
     required int userId,
-    required int foodId,
+    this.foodId = const Value.absent(),
     this.usersMealId = const Value.absent(),
     required DateTime date,
     required TypeOfMeal typeOfMeal,
     required int amount,
     required bool isChecked,
   })  : userId = Value(userId),
-        foodId = Value(foodId),
         date = Value(date),
         typeOfMeal = Value(typeOfMeal),
         amount = Value(amount),
@@ -1681,7 +1681,7 @@ class UsersPlannedMealsCompanion extends UpdateCompanion<UsersPlannedMeal> {
   UsersPlannedMealsCompanion copyWith(
       {Value<int>? id,
       Value<int>? userId,
-      Value<int>? foodId,
+      Value<int?>? foodId,
       Value<int?>? usersMealId,
       Value<DateTime>? date,
       Value<TypeOfMeal>? typeOfMeal,

@@ -29,7 +29,7 @@ class _NutritionTracker extends State<NutritionTracker> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<NutritionTrackerState>(builder: (context, nutritionState, child) {
+    return Consumer<MenuState>(builder: (context, nutritionState, child) {
       return Column(
         mainAxisAlignment:  MainAxisAlignment.center,
         children: [

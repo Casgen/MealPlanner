@@ -7,11 +7,15 @@ class AmountCounter extends StatefulWidget {
     required this.unit,
     this.onChanged,
     this.initialValue,
+    this.onFieldSubmitted,
+    this.onTapOutside
   });
 
   final int? initialValue;
   final Unit unit;
   final void Function(int value)? onChanged;
+  final void Function(int value)? onFieldSubmitted;
+  final void Function(PointerDownEvent event)? onTapOutside;
 
   @override
   State<StatefulWidget> createState() => _AmountCounter();
@@ -40,6 +44,7 @@ class _AmountCounter extends State<AmountCounter> {
             initialValue: widget.initialValue?.toString(),
             keyboardType: TextInputType.number,
             onChanged: _onChanged,
+            onFieldSubmitted: _onFieldSubmitted,
           ),
         ),
         Icon(
@@ -66,5 +71,16 @@ class _AmountCounter extends State<AmountCounter> {
 
       return widget.onChanged!(0);
     }
+  }
+
+  void _onFieldSubmitted(String? value) {
+    if (widget.onFieldSubmitted != null) {
+      if (value != null && value.isNotEmpty) {
+        return widget.onFieldSubmitted!(int.parse(value));
+      }
+
+      return widget.onFieldSubmitted!(0);
+    }
+
   }
 }

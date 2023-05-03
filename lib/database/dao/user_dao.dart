@@ -44,10 +44,6 @@ class UsersDao extends DatabaseAccessor<UMTEDatabase> with _$UsersDaoMixin {
   }
 
   Future<List<UsersPlannedMeal>> findAllUsersPlannedMealsByIdAndDateTimeAndWeekday(int userId, DateTime dateTime, TypeOfMeal typeOfMeal) {
-    int day = dateTime.day;
-    int month = dateTime.month;
-    int year = dateTime.year;
-
     return (select(usersPlannedMeals)..where((tbl) =>
       tbl.userId.equals(userId) &
       tbl.date.day.equals(dateTime.day) &
@@ -55,6 +51,10 @@ class UsersDao extends DatabaseAccessor<UMTEDatabase> with _$UsersDaoMixin {
       tbl.date.year.equals(dateTime.year) &
       tbl.typeOfMeal.equals(typeOfMeal.getName())
     )).get();
+  }
+
+  Future<void> removeUsersPlannedMealById(int plannedMealId) {
+    return (delete(usersPlannedMeals)..where((tbl) => tbl.id.equals(plannedMealId))).go();
   }
 
   Future<List<UsersPlannedMeal>> findAllUsersPlannedMealsByIdAndDateTime(int userId, DateTime dateTime) {
@@ -152,6 +152,10 @@ class UsersDao extends DatabaseAccessor<UMTEDatabase> with _$UsersDaoMixin {
           fats: Value(fats),
         )
       );
+  }
+
+  Future<void> deleteUsersMealIngredientById(int usersMealIngredientId) {
+    return (delete(usersMealsIngredients)..where((tbl) => tbl.id.equals(usersMealIngredientId))).go();
   }
 
 

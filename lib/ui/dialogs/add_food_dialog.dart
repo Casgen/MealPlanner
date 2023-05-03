@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:umte_project/data/enums/type_of_meal.dart';
-import 'package:umte_project/data/enums/unit.dart';
 import 'package:umte_project/database/database.dart';
 import 'package:umte_project/services/user_service.dart';
 import 'package:umte_project/ui/components/food/amount_counter.dart';
 import 'package:umte_project/ui/components/meal/type_of_meal_dropdown_menu.dart';
 
-class AddMealDialog extends StatefulWidget {
-  AddMealDialog({super.key, required this.meal, required this.dateTime});
+class AddFoodDialog extends StatefulWidget {
+  AddFoodDialog({super.key, required this.food, required this.dateTime});
 
   final DateTime dateTime;
-  final UsersMeal meal;
+  final Food food;
   final UserService userService = Get.find<UserService>();
 
   @override
-  State<AddMealDialog> createState() => _AddMealDialog();
+  State<StatefulWidget> createState() => _AddFoodDialog();
 }
 
-class _AddMealDialog extends State<AddMealDialog> {
+class _AddFoodDialog extends State<AddFoodDialog> {
   late DateTime dateTime;
   TypeOfMeal? typeOfMeal;
   int? amount;
@@ -58,7 +57,7 @@ class _AddMealDialog extends State<AddMealDialog> {
                 });
               }),
               AmountCounter(
-                unit: Unit.pieces,
+                unit: widget.food.unit,
                 onChanged: (value) {
                   setState(() {
                     amount = value;
@@ -97,9 +96,7 @@ class _AddMealDialog extends State<AddMealDialog> {
         showProgress = true;
       });
 
-      await widget.userService.addUsersMealAsPlanned(widget.meal.id, dateTime, typeOfMeal!, amount);
-
-      if (!context.mounted) return;
+      await widget.userService.addFoodAsPlanned(widget.food.id, dateTime, typeOfMeal!, amount);
 
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -114,14 +111,7 @@ class _AddMealDialog extends State<AddMealDialog> {
       setState(() {
         showProgress = false;
       });
-      print("An error occurred while adding a meal to the menu! $err");
-
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(
-          content: Text("An error occcurred while add a meal to the menu!"),
-          backgroundColor: Colors.red,
-        ));
+      print("An error occurres while adding a food to the planned menu! $err");
     }
   }
 }

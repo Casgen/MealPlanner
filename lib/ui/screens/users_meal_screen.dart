@@ -52,7 +52,7 @@ class _UsersMealScreen extends State<UsersMealScreen> {
                               usersMeal: widget.usersMeal,
                               onConfirm: () {
                                 setState(() {
-                                  refresh = true;
+                                  refresh = !refresh;
                                 });
                               },
                             )));
@@ -108,6 +108,11 @@ class _UsersMealScreen extends State<UsersMealScreen> {
           key: Key(ingredientsItems.toString()),
           food: foods[i],
           ingredient: ingredients[i],
+          onRemove: (ingredient) {
+            setState(() {
+              refresh = !refresh;
+            });
+          },
         ),
       ));
     }

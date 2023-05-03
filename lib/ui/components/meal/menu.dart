@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:umte_project/data/enums/type_of_meal.dart';
 import 'package:umte_project/data/enums/week_day.dart';
 import 'package:umte_project/database/database.dart';
 import 'package:umte_project/services/user_service.dart';
-import 'package:umte_project/state/nutrition_tracker_state.dart';
 import 'package:umte_project/ui/components/nutrition_tracker.dart';
 
 import 'menu_card.dart';
@@ -27,53 +25,60 @@ class Menu extends StatelessWidget {
 
     // Provider.of<NutritionTrackerState>(context, listen: false).clearArrays();
 
-    return Card(
-      color: theme.cardColor,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
+    return Column(
+      children: [
+        const Card(child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: NutritionTracker(),
+        )),
+        const SizedBox(height: 10),
+        Card(
+          color: theme.cardColor,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(weekday.getName(), style: style),
+                Row(
+                  children: [
+                    Text(weekday.getName(), style: style),
+                  ],
+                ),
+                FutureBuilder(
+                    future: getUsersPlannedMeals(),
+                    builder:
+                        (context, AsyncSnapshot<List<UsersPlannedMeal>> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasData && !snapshot.hasError) {
+                          return Column(
+                            children: TypeOfMeal.values
+                                .map((el) => MenuCard(
+                                      typeOfMeal: el,
+                                      dateTime: dateTime,
+                                      usersPlannedMeals: snapshot.data!
+                                          .where(
+                                              (element) => element.typeOfMeal == el)
+                                          .toList(),
+                                    ))
+                                .toList(),
+                          );
+                        }
+
+                        return const Center(
+                            child:
+                                Text("An error occurred while loading the data!"));
+                      }
+
+                      return const Center(child: CircularProgressIndicator());
+                    })
               ],
             ),
-            const NutritionTracker(),
-            FutureBuilder(
-                future: getUsersPlannedMeals(),
-                builder:
-                    (context, AsyncSnapshot<List<UsersPlannedMeal>> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasData && !snapshot.hasError) {
-                      return Column(
-                        children: TypeOfMeal.values
-                            .map((el) => MenuCard(
-                                  typeOfMeal: el,
-                                  dateTime: dateTime,
-                                  usersPlannedMeals: snapshot.data!
-                                      .where(
-                                          (element) => element.typeOfMeal == el)
-                                      .toList(),
-                                ))
-                            .toList(),
-                      );
-                    }
-
-                    return const Center(
-                        child:
-                            Text("An error occurred while loading the data!"));
-                  }
-
-                  return const Center(child: CircularProgressIndicator());
-                })
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 

@@ -22,6 +22,7 @@ class MenuCard extends StatefulWidget {
 
 class _MealsCard extends State<MenuCard> {
   bool _isExpanded = false;
+  bool _refresh = false;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +69,13 @@ class _MealsCard extends State<MenuCard> {
 
     return Column(
       children: widget.usersPlannedMeals
-          .map((e) => MenuItem(usersPlannedMeal: e))
+          .map((e) =>
+              MenuItem(usersPlannedMeal: e, typeOfMeal: widget.typeOfMeal, onRemove: () {
+                widget.usersPlannedMeals.remove(e);
+                setState(() {
+                  _refresh = !_refresh;
+                });
+              },))
           .toList(),
     );
   }

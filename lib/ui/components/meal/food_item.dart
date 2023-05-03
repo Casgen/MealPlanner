@@ -9,11 +9,13 @@ class FoodItem extends StatefulWidget {
     required this.food,
     required this.amount,
     required this.isChecked,
+    required this.onRemoved,
   });
 
   final Food food;
   final int amount;
   final bool isChecked;
+  final Future<bool> Function(Food) onRemoved;
 
   @override
   State<StatefulWidget> createState() => _FoodItem();
@@ -35,12 +37,17 @@ class _FoodItem extends State<FoodItem> {
     TextStyle style = theme.textTheme.titleMedium!
         .copyWith(color: theme.colorScheme.onSurface);
 
-    return Consumer<NutritionTrackerState>(
+    return Consumer<MenuState>(
         builder: (builder, nutritionState, child) {
       if (widget.isChecked) nutritionState.addConsumedFood(widget.food, widget.amount);
       return Row(
         children: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
+          IconButton(onPressed: () async {
+            bool isSuccessful = await widget.onRemoved(widget.food);
+            if (isSuccessful) {
+              nutritionState.removeConsumedFood(widget.food);
+            }
+          }, icon: const Icon(Icons.delete)),
           Text(widget.amount.toString(), style: style),
           const Icon(Icons.close_rounded, size: 15),
           Text(widget.food.unit.getSymbol(), style: style),

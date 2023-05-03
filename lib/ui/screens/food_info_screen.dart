@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:umte_project/services/user_service.dart';
-import 'package:umte_project/ui/dialogs/add_meal_dialog.dart';
+import 'package:umte_project/ui/dialogs/add_food_dialog.dart';
 import '../../database/database.dart';
 import '../components/buttons/icon_toggle_button.dart';
 import '../components/food/nutrition.dart';
@@ -101,7 +101,7 @@ class _FoodInfoScreenState extends State<FoodInfoScreen> {
                 IconButton(
                   onPressed: () => showDialog(
                       context: context,
-                      builder: (BuildContext context) => AddMealDialog(food: widget.food, dateTime: DateTime.now())
+                      builder: (BuildContext context) => AddFoodDialog(food: widget.food, dateTime: DateTime.now())
                   ),
                   icon: Icon(Icons.add,
                       size: 30, color: theme.colorScheme.onPrimary),
@@ -111,7 +111,7 @@ class _FoodInfoScreenState extends State<FoodInfoScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
+          child: ListView(
             children: [
               Nutrition(food: widget.food),
               const SizedBox(

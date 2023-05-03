@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:umte_project/services/notification_service.dart';
 import 'package:umte_project/ui/components/meal/menu.dart';
 import 'package:umte_project/ui/components/side_menu.dart';
 
@@ -8,6 +10,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  NotificationService notificationService = Get.find<NotificationService>();
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);

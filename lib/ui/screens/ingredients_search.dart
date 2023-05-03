@@ -123,12 +123,17 @@ class _SearchIngredientsScreen extends State<SearchIngredientsScreen> {
 
       appState.clearFoodIngredients();
 
-      Navigator.pop(context);
+      if (!context.mounted) return;
 
       ScaffoldMessenger.of(context)
         ..removeCurrentSnackBar()
         ..showSnackBar(
             const SnackBar(content: Text("Ingredients succesfully added!")));
+
+      Navigator.pop(context);
+
+
+      widget.onConfirm();
 
       setState(() {
         showConfirmProgress = false;
