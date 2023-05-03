@@ -33,11 +33,11 @@ class SideMenu extends StatelessWidget {
           MenuItem(text: "Hydration", icon: Icons.water_drop, onTap: () => navigateTo(context, const HydrationScreen())),
           MenuItem(text: "Your meals",icon: Icons.menu_book, onTap: () => navigateTo(context, YourMealsScreen())),
           MenuItem(text: "Your favorites",icon: Icons.favorite_rounded, onTap: () => navigateTo(context, const YourFavoriteFoodsScreen())),
-          MenuItem(
-              text: "Database",
-              icon: Icons.data_array,
-              onTap: () => navigateTo(context, DriftDbViewer(Get.find<UMTEDatabase>()))
-          ),
+          // MenuItem(
+          //     text: "Database",
+          //     icon: Icons.data_array,
+          //     onTap: () => navigateTo(context, DriftDbViewer(Get.find<UMTEDatabase>()))
+          // ),
         ],
       ),
     );
