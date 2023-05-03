@@ -13,6 +13,7 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   int incId = 0;
+  int amountToBeDrank = 0;
 
   Future<void> initializePlatformNotifications() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -31,10 +32,10 @@ class NotificationService {
     await _localNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse notificationResponse) async {
-            print("object");
+              print("object");
             });
 
-    //scheduleNotifications();
+    scheduleNotifications(5);
   }
 
   notificationDetails() {
@@ -67,14 +68,33 @@ class NotificationService {
     tz.setLocalLocation(tz.getLocation(timeZoneName!));
   }
 
-  Future<void> scheduleNotifications() async {
-    return _localNotificationsPlugin.zonedSchedule(
-      0,
-      "Time to Hydrate!",
+  Future<void> scheduleNotifications(int amount) async {
+    _localNotificationsPlugin.cancelAll();
+
+    DateTime begin = tz.TZDateTime.now(tz.local).copyWith(minute: 0, hour: 7, second: 0);
+    DateTime end = tz.TZDateTime.now(tz.local).copyWith(minute: 0, hour: 21, second: 0);
+
+    for (int i = 0; i <= amount; i++) {
+
+      Duration deltaDuration = end.difference(begin);
+      double result = end.millisecondsSinceEpoch + (deltaDuration.inMilliseconds * i/5);
+      int milliSecondsSinceEpoch = result.toInt();
+
+      if (tz.TZDateTime.now(tz.local).millisecondsSinceEpoch < milliSecondsSinceEpoch) {
+        _localNotificationsPlugin.zonedSchedule(
+          i,
+          "Time to Hydrate!",
           "Drink up!",
-      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
-      notificationDetails(),
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-    );
+          tz.TZDateTime.fromMillisecondsSinceEpoch(tz.local, milliSecondsSinceEpoch),
+          notificationDetails(),
+          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        );
+      }
+
+    }
+  }
+
+  Future<void> disableNotification() async {
+    _localNotificationsPlugin.cancelAll();
   }
 }

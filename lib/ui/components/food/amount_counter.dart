@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:umte_project/data/enums/unit.dart';
 
@@ -8,7 +10,8 @@ class AmountCounter extends StatefulWidget {
     this.onChanged,
     this.initialValue,
     this.onFieldSubmitted,
-    this.onTapOutside
+    this.onTapOutside,
+    this.limit
   });
 
   final int? initialValue;
@@ -16,12 +19,22 @@ class AmountCounter extends StatefulWidget {
   final void Function(int value)? onChanged;
   final void Function(int value)? onFieldSubmitted;
   final void Function(PointerDownEvent event)? onTapOutside;
+  final int? limit;
 
   @override
   State<StatefulWidget> createState() => _AmountCounter();
 }
 
 class _AmountCounter extends State<AmountCounter> {
+
+  int _amount = 0;
+
+  @override
+  void initState() {
+    if (widget.initialValue != null) {
+      _amount = widget.initialValue!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +45,7 @@ class _AmountCounter extends State<AmountCounter> {
       );
 
     return Row(
-      mainAxisSize: MainAxisSize.max,
+      mainAxisSize: MainAxisSize.min,
       children: [
         ConstrainedBox(
           constraints: const BoxConstraints(
@@ -66,7 +79,13 @@ class _AmountCounter extends State<AmountCounter> {
   void _onChanged(String value) {
     if (widget.onChanged != null) {
       if (value.isNotEmpty) {
-        return widget.onChanged!(int.parse(value));
+
+        int resultVal = int.parse(value);
+
+        if (widget.limit != null) {
+          resultVal = min(resultVal, widget.limit!);
+        }
+        return widget.onChanged!(resultVal);
       }
 
       return widget.onChanged!(0);
@@ -76,7 +95,14 @@ class _AmountCounter extends State<AmountCounter> {
   void _onFieldSubmitted(String? value) {
     if (widget.onFieldSubmitted != null) {
       if (value != null && value.isNotEmpty) {
-        return widget.onFieldSubmitted!(int.parse(value));
+
+        int resultVal = int.parse(value);
+
+        if (widget.limit != null) {
+          resultVal = min(resultVal, widget.limit!);
+        }
+
+        return widget.onFieldSubmitted!(resultVal);
       }
 
       return widget.onFieldSubmitted!(0);

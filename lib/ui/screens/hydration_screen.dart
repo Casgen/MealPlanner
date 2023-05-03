@@ -2,9 +2,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:format/format.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:umte_project/data/enums/unit.dart';
+import 'package:umte_project/services/notification_service.dart';
+import 'package:umte_project/services/notification_service.dart';
+import 'package:umte_project/services/notification_service.dart';
+import 'package:umte_project/ui/components/food/amount_counter.dart';
 
 import '../components/hydration/add_liters_button.dart';
 import '../components/side_menu.dart';
@@ -38,9 +44,17 @@ class _HydrationScreenState extends State<HydrationScreen> {
             backgroundColor: theme.primaryColor,
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),
-            title: const Text("Home")),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+            title: Row(
+              children: [
+                Text("Hydration"),
+                Spacer(),
+                IconButton(onPressed: () {
+                  showDialog(context: context, builder: (builder) => NotificationDialog());
+                }, icon: const Icon(Icons.notifications))
+              ],
+            )
+        ),
+        body: ListView(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -178,4 +192,58 @@ class WaterGauge extends StatelessWidget {
           ])
         ]);
   }
+}
+
+class NotificationDialog extends StatefulWidget {
+  NotificationDialog({super.key});
+
+  final NotificationService notificationService = Get.find<NotificationService>();
+
+  @override
+  State<NotificationDialog> createState() => _NotificationDialog();
+
+}
+
+class _NotificationDialog extends State<NotificationDialog> {
+
+  int _amount = 5;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: AmountCounter(
+                unit: Unit.times,
+                onChanged: (value) {
+                  setState(() {
+                    _amount = value;
+                  });
+                },
+                limit: 499,
+                initialValue: _amount,
+              ),
+            ),
+            FilledButton(onPressed: () {
+              widget.notificationService.scheduleNotifications(_amount);
+
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(const SnackBar(
+                  content: Text("Notifications set."),
+                ));
+
+              Navigator.pop(context);
+            }, child: const Text("Save Notifications"))
+          ],
+        ),
+      ),
+    );
+  }
+
 }

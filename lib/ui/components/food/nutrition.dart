@@ -17,7 +17,6 @@ class Nutrition extends StatefulWidget {
 }
 
 class _NutritionState extends State<Nutrition> {
-
   int amount = 100;
 
   @override
@@ -45,18 +44,37 @@ class _NutritionState extends State<Nutrition> {
               ],
             ),
             NutritionRow(
-                nutritionText: "Calories", amount: amount * widget.food.calories!),
-            NutritionRow(nutritionText: "Fibre", amount: amount * widget.food.fibre!),
+                unit: "kcal",
+                nutritionText: "Calories",
+                amount: widget.food.calories != null
+                    ? amount * widget.food.calories!
+                    : 0.0),
+            NutritionRow(
+                nutritionText: "Fibre",
+                unit: "g",
+                amount: widget.food.fibre != null
+                    ? amount * widget.food.fibre!
+                    : 0.0),
             NutritionRow(
               nutritionText: "Carbohydrates",
-              amount: amount * widget.food.carbohydrates!,
+              unit: "g",
+              amount: widget.food.carbohydrates != null
+                  ? amount * widget.food.carbohydrates!
+                  : 0.0,
             ),
             NutritionRow(
+              unit: "g",
               nutritionText: "Of which sugars",
-              amount: amount * widget.food.sugars!,
+              amount: widget.food.sugars != null
+                  ? amount * widget.food.sugars!
+                  : 0.0,
               leftOffset: 15,
             ),
-            NutritionRow(nutritionText: "Fats", amount: amount * widget.food.fats!),
+            NutritionRow(
+                unit: "g",
+                nutritionText: "Fats",
+                amount: widget.food.fats != null ?
+                amount * widget.food.fats! : 0.0),
           ],
         ),
       ),
@@ -67,13 +85,15 @@ class _NutritionState extends State<Nutrition> {
 class NutritionRow extends StatelessWidget {
   const NutritionRow(
       {super.key,
-        required this.nutritionText,
-        required this.amount,
-        this.leftOffset = 0.0});
+      required this.nutritionText,
+      required this.amount,
+        required this.unit,
+      this.leftOffset = 0.0});
 
   final String nutritionText;
   final double? amount;
   final double leftOffset;
+  final String unit;
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +115,7 @@ class NutritionRow extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            amount != null ? format('{:.2f} g', amount!) : '-',
+            amount != null ? format('{:.2f} $unit', amount!) : '-',
             style: style,
           )
         ],
