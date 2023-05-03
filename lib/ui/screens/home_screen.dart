@@ -10,8 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   NotificationService notificationService = Get.find<NotificationService>();
+  DateTime _dateTime = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +25,37 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: theme.primaryColor,
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),
-            title: const Text("Home")),
+            title: Row(
+              children: [
+                Text("Home"),
+                Spacer(),
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              child: CalendarDatePicker(
+                                initialCalendarMode: DatePickerMode.day,
+                                initialDate: _dateTime,
+                                firstDate: DateTime(2020),
+                                onDateChanged: (date) {
+                                  setState(() {
+                                    _dateTime = date;
+                                  });
+                                },
+                                lastDate: DateTime(3000),
+                              ),
+                            );
+                          });
+                    },
+                    icon: const Icon(Icons.calendar_month_rounded))
+              ],
+            )),
         body: ListView(children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Menu(DateTime.now()),
+            child: Menu(_dateTime),
           )
         ]),
       );

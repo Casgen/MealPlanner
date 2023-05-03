@@ -65,11 +65,11 @@ class UserService {
     
     List<Food> foods = await _foodsDao.findAllByFoodIds(foodIds);
 
-    List<double> fibreArray = foods.map((food) => food.fibre ?? 0.0).toList(); 
-    List<double> carbohydratesArray = foods.map((food) => food.carbohydrates ?? 0.0).toList(); 
-    List<double> sugarsArray = foods.map((food) => food.sugars ?? 0.0).toList(); 
-    List<double> fatsArray = foods.map((food) => food.fats ?? 0.0).toList(); 
-    List<double> caloriesArray = foods.map((food) => food.calories ?? 0.0).toList(); 
+    List<double> fibreArray = foods.map((food) => (food.fibre ?? 0.0) * ingredients.firstWhere((ingredient) => ingredient.foodId.isEqual(food.id)).amount).toList();
+    List<double> carbohydratesArray = foods.map((food) => (food.carbohydrates ?? 0.0) * ingredients.firstWhere((ingredient) => ingredient.foodId.isEqual(food.id)).amount).toList();
+    List<double> sugarsArray = foods.map((food) => (food.sugars ?? 0.0) * ingredients.firstWhere((ingredient) => ingredient.foodId.isEqual(food.id)).amount).toList();
+    List<double> fatsArray = foods.map((food) => (food.fats ?? 0.0) * ingredients.firstWhere((ingredient) => ingredient.foodId.isEqual(food.id)).amount).toList();
+    List<double> caloriesArray = foods.map((food) => (food.calories ?? 0.0) * ingredients.firstWhere((ingredient) => ingredient.foodId.isEqual(food.id)).amount).toList();
 
     double fibreSum = fibreArray.reduce((value, element) => value + element);
     double carbohydratesSum = carbohydratesArray.reduce((value, element) => value + element);

@@ -29,7 +29,6 @@ class _HydrationScreenState extends State<HydrationScreen> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    TextStyle amountTextStyle = GoogleFonts.barlowCondensed();
 
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(

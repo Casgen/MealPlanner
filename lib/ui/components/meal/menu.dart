@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:format/format.dart';
 import 'package:get/get.dart';
 import 'package:umte_project/data/enums/type_of_meal.dart';
 import 'package:umte_project/data/enums/week_day.dart';
 import 'package:umte_project/database/database.dart';
 import 'package:umte_project/services/user_service.dart';
+import 'package:umte_project/state/nutrition_tracker_state.dart';
 import 'package:umte_project/ui/components/nutrition_tracker.dart';
 
 import 'menu_card.dart';
@@ -19,7 +21,7 @@ class Menu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    TextStyle style = theme.textTheme.headlineLarge!.copyWith(
+    TextStyle style = theme.textTheme.headlineMedium!.copyWith(
       color: theme.colorScheme.onSurface,
     );
 
@@ -39,10 +41,18 @@ class Menu extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  children: [
-                    Text(weekday.getName(), style: style),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Row(
+                    children: [
+                      Text(weekday.getName(), style: style),
+                      Spacer(),
+                      Text(
+                          format('{:d}.{:d}.{:04d}', dateTime.day, dateTime.month, dateTime.year),
+                          style: style,
+                      )
+                    ],
+                  ),
                 ),
                 FutureBuilder(
                     future: getUsersPlannedMeals(),
