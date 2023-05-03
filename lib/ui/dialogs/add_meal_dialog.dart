@@ -100,12 +100,13 @@ class _AddMealDialog extends State<AddMealDialog> {
 
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(
-          content: const Text("Food was added to your menu!"),
-          backgroundColor: theme.colorScheme.primary,
+        ..showSnackBar(const SnackBar(
+          content: Text("Food was added to your menu!"),
+          backgroundColor: Colors.green,
         ));
 
       Navigator.pop(context);
+
     } catch (err) {
       setState(() {
         showProgress = false;

@@ -3,12 +3,19 @@ import 'package:get/get.dart';
 import 'package:umte_project/database/database.dart';
 import 'package:umte_project/services/user_service.dart';
 import 'package:umte_project/ui/components/side_menu.dart';
+import 'package:umte_project/ui/dialogs/create_new_meal.dart';
 import 'package:umte_project/ui/screens/users_meal_screen.dart';
 
-class YourMealsScreen extends StatelessWidget {
+class YourMealsScreen extends StatefulWidget {
   YourMealsScreen({super.key});
 
+  @override
+  State<YourMealsScreen> createState() => _YourMealsScreenState();
+}
+
+class _YourMealsScreenState extends State<YourMealsScreen> {
   final UserService userService = Get.find<UserService>();
+  bool _triggerRebuild = false;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +29,25 @@ class YourMealsScreen extends StatelessWidget {
             backgroundColor: theme.primaryColor,
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),
-            title: const Text("Your Meals")),
+            title: Row(
+              children: [
+                const Text("Your Meals"),
+                const Spacer(),
+                IconButton(
+                  onPressed: () => showDialog(
+                      context: context,
+                      builder: (BuildContext context) => CreateNewMealDialog(
+                            onCreate: () {
+                              setState(() {
+                                _triggerRebuild = true;
+                              });
+                            },
+                          )),
+                  icon: Icon(Icons.add,
+                      size: 30, color: theme.colorScheme.onPrimary),
+                )
+              ],
+            )),
         body: FutureBuilder(
             future: userService.getLoggedInUsersMeals(),
             builder: (context, AsyncSnapshot<List<UsersMeal>> snapshot) {

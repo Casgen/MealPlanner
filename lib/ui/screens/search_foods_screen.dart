@@ -9,7 +9,10 @@ import 'package:umte_project/ui/screens/food_info_screen.dart';
 import '../components/side_menu.dart';
 
 class SearchFoodsScreen extends StatefulWidget {
-  const SearchFoodsScreen({super.key});
+  const SearchFoodsScreen({
+    super.key,
+  });
+
 
   @override
   State<SearchFoodsScreen> createState() => _SearchFoodsScreen();
@@ -66,6 +69,7 @@ class _SearchFoodsScreen extends State<SearchFoodsScreen> {
                   );
                 }),
               ),
+
       );
     });
   }

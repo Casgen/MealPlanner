@@ -4,6 +4,7 @@ import 'package:umte_project/database/database.dart';
 import 'package:umte_project/services/user_service.dart';
 import 'package:umte_project/ui/components/items/ingredient_item.dart';
 import 'package:umte_project/ui/components/side_menu.dart';
+import 'package:umte_project/ui/screens/ingredients_search.dart';
 
 class UsersMealScreen extends StatefulWidget {
   UsersMealScreen({
@@ -19,6 +20,8 @@ class UsersMealScreen extends StatefulWidget {
 }
 
 class _UsersMealScreen extends State<UsersMealScreen> {
+  bool refresh = false;
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -31,7 +34,34 @@ class _UsersMealScreen extends State<UsersMealScreen> {
             backgroundColor: theme.primaryColor,
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),
-            title: Text(widget.usersMeal.name)),
+            title: Row(
+              children: [
+                const Icon(
+                  Icons.restaurant_menu,
+                  size: 20,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(widget.usersMeal.name),
+                const Spacer(),
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (builder) => SearchIngredientsScreen(
+                              usersMeal: widget.usersMeal,
+                              onConfirm: () {
+                                setState(() {
+                                  refresh = true;
+                                });
+                              },
+                            )));
+                  },
+                  icon: Icon(Icons.add,
+                      size: 30, color: theme.colorScheme.onPrimary),
+                )
+              ],
+            )),
         body: FutureBuilder(
             future: _createFoodList(),
             builder: (context, AsyncSnapshot<Widget> snapshot) {
@@ -66,10 +96,10 @@ class _UsersMealScreen extends State<UsersMealScreen> {
     }
 
     if (ingredients.isEmpty) {
-      return const Center(child: Text("No ingredients added yet"));
+      return const Center(child: Text("No ingredients added yet."));
     }
 
-    List<Widget> ingredientsItems = List.empty();
+    List<Widget> ingredientsItems = [];
 
     for (int i = 0; i < ingredients.length; i++) {
       ingredientsItems.add(ListTile(

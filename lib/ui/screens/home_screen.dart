@@ -8,8 +8,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -23,7 +21,12 @@ class _HomeScreenState extends State<HomeScreen> {
             titleTextStyle: theme.textTheme.headlineSmall!
                 .copyWith(color: theme.colorScheme.onPrimary),
             title: const Text("Home")),
-        body: ListView(children: [Menu(DateTime.now())]),
+        body: ListView(children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Menu(DateTime.now()),
+          )
+        ]),
       );
     });
   }

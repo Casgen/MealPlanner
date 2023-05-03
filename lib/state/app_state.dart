@@ -1,53 +1,38 @@
-import 'package:english_words/english_words.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import 'package:umte_project/opts/firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart'
-  hide EmailAuthProvider, PhoneAuthProvider;
-import 'package:flutter/material.dart'
-    show ChangeNotifier;
+import 'package:umte_project/database/database.dart';
+import 'package:flutter/material.dart' show ChangeNotifier;
 
-class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-  Set<WordPair> favorites = <WordPair>{};
+class AppState extends ChangeNotifier {
+  List<Food> _foodIngredients;
+  List<Food> get foodIngredients => _foodIngredients;
 
-  bool _loggedIn = false;
+  bool _loggedIn;
   bool get loggedIn => _loggedIn;
 
-  MyAppState() {
-    initFirebase();
-  }
+  AppState()
+      : _foodIngredients = [],
+        _loggedIn = false;
 
-  Future<void> initFirebase() async {
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform
-    );
-
-    FirebaseUIAuth.configureProviders([
-      EmailAuthProvider(),
-    ]);
-
-    FirebaseAuth.instance.userChanges().listen((user) {
-      _loggedIn = user != null;
-      notifyListeners();
-    });
-  }
-
-  void getNext() {
-    current = WordPair.random();
+  void addFoodIngredient(Food food) {
+    _foodIngredients.add(food);
     notifyListeners();
   }
 
-  void toggleFavorite() {
-    if (!favorites.add(current)) {
-      favorites.remove(current);
-    }
-
+  void initFoodIngredientsList(List<Food> newList) {
+    _foodIngredients = newList;
     notifyListeners();
   }
 
-  void removeFavorite(WordPair pair) {
-    favorites.remove(pair);
+  void setLoggedIn(bool isLoggedIn) {
+    _loggedIn = isLoggedIn;
+  }
+
+  void removeFoodIngredient(Food food) {
+    _foodIngredients.remove(food);
+    notifyListeners();
+  }
+
+  void clearFoodIngredients() {
+    _foodIngredients.clear();
     notifyListeners();
   }
 }

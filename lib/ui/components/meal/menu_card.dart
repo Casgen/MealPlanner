@@ -5,7 +5,8 @@ import '../../../database/database.dart';
 import 'menu_item.dart';
 
 class MenuCard extends StatefulWidget {
-  const MenuCard({super.key,
+  const MenuCard({
+    super.key,
     required this.typeOfMeal,
     required this.dateTime,
     required this.usersPlannedMeals,
@@ -31,46 +32,44 @@ class _MealsCard extends State<MenuCard> {
     );
 
     return Card(
-            color: colorScheme.onSecondary,
-            child: Padding(
-              padding: const EdgeInsetsDirectional.all(8.0),
-              child: AnimatedContainer(
-                duration: const Duration(seconds: 1),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(widget.typeOfMeal.getName(), style: style),
-                        const Spacer(),
-                        IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _isExpanded = !_isExpanded;
-                              });
-                            },
-                            icon: const Icon(Icons.menu_rounded))
-                      ],
-                    ),
-                    _showItems()
-                  ],
-                ),
-              ),
+      color: Colors.indigo.shade50,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.all(8.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Text(widget.typeOfMeal.getName(), style: style),
+                const Spacer(),
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isExpanded = !_isExpanded;
+                      });
+                    },
+                    icon: const Icon(Icons.menu_rounded))
+              ],
             ),
-          );
+            _showItems()
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _showItems() {
     if (!_isExpanded) return Column();
 
     if (widget.usersPlannedMeals.isEmpty) {
-      return Column(children: const [Text("Nothing to see here...")],);
+      return Column(
+        children: const [Text("Nothing to see here...")],
+      );
     }
 
-    return Column (
+    return Column(
       children: widget.usersPlannedMeals
           .map((e) => MenuItem(usersPlannedMeal: e))
           .toList(),
     );
   }
-
 }

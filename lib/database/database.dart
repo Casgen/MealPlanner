@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:umte_project/data/enums/type_of_meal.dart';
 import 'package:umte_project/database/dao/foods_dao.dart';
 import 'package:umte_project/database/dao/user_dao.dart';
 import 'package:umte_project/database/dao/users_meals_dao.dart';

@@ -33,6 +33,11 @@ class UsersMeals extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get userId => integer().references(Users, #id)();
   TextColumn get name => text().withLength(min: 1, max: 100)();
+  RealColumn get calories => real().nullable()();
+  RealColumn get fibre => real().nullable()();
+  RealColumn get carbohydrates => real().nullable()();
+  RealColumn get sugars => real().nullable()();
+  RealColumn get fats => real().nullable()();
 }
 
 class UsersPlannedMeals extends Table {

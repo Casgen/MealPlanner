@@ -36,6 +36,7 @@ class _MealItem extends State<MenuItem> {
             child: FutureBuilder(
               future: _decideItem(),
               builder: (context, AsyncSnapshot<Widget> snapshot) {
+
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   const Center(child: LinearProgressIndicator());
                 }

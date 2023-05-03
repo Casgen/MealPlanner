@@ -23,10 +23,11 @@ class _AmountCounter extends State<AmountCounter> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     TextStyle unitsStyle = theme.textTheme.titleLarge!
-        .copyWith(color: theme.colorScheme.onSurface);
+        .copyWith(
+        color: theme.colorScheme.onSurface,
+      );
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
         ConstrainedBox(
@@ -35,15 +36,23 @@ class _AmountCounter extends State<AmountCounter> {
             minWidth: 20,
           ),
           child: TextFormField(
+            textAlignVertical: TextAlignVertical.bottom,
             initialValue: widget.initialValue?.toString(),
             keyboardType: TextInputType.number,
             onChanged: _onChanged,
           ),
         ),
-        const Icon(Icons.close_rounded),
-        Text(
-            widget.unit.getSymbol(),
-            style: unitsStyle
+        Icon(
+          Icons.close_rounded,
+          color: theme.colorScheme.onSurface,
+        ),
+        Baseline(
+          baselineType: TextBaseline.alphabetic,
+          baseline: 17,
+          child: Text(
+              widget.unit.getSymbol(),
+              style: unitsStyle,
+          ),
         )
       ],
     );

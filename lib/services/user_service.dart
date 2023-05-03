@@ -40,28 +40,66 @@ class UserService {
   }
 
   Future<void> addFoodToFavorites(int userId, int foodId) async {
-    await _usersDao.saveFavoriteFood(userId, foodId);
+    return _usersDao.saveFavoriteFood(userId, foodId);
   }
 
   Future<void> addLoggedInUsersFoodToFavorites(int foodId) async {
     int userId = await _obtainUserId();
-    await _usersDao.saveFavoriteFood(userId, foodId);
+    return _usersDao.saveFavoriteFood(userId, foodId);
   }
 
+  Future<void> updateUsersMealIngredient(UsersMealsIngredient ingredient, int amount) async {
+    await _usersMealsIngredientsDao.updateUsersMealsIngredientAmountById(ingredient.id, amount);
+    _updateUsersMealNutritionsById(ingredient.userMealId);
+  }
+
+  Future<void> addFoodIngredientsToUsersMeal(UsersMeal usersMeal, List<Food> foods) async {
+    await _usersMealsIngredientsDao.insertUsersMealsIngredients(usersMeal, foods);
+    return _updateUsersMealNutritionsById(usersMeal.id);
+  }
+
+  Future<void> _updateUsersMealNutritionsById(int usersMealId) async {
+
+    List<UsersMealsIngredient> ingredients = await _usersMealsIngredientsDao.findAllIngredientsByUsersMealId(usersMealId);
+    List<int> foodIds = ingredients.map((ingredient) => ingredient.foodId).toList();
+    
+    List<Food> foods = await _foodsDao.findAllByFoodIds(foodIds);
+
+    List<double> fibreArray = foods.map((food) => food.fibre ?? 0.0).toList(); 
+    List<double> carbohydratesArray = foods.map((food) => food.carbohydrates ?? 0.0).toList(); 
+    List<double> sugarsArray = foods.map((food) => food.sugars ?? 0.0).toList(); 
+    List<double> fatsArray = foods.map((food) => food.fats ?? 0.0).toList(); 
+    List<double> caloriesArray = foods.map((food) => food.calories ?? 0.0).toList(); 
+
+    double fibreSum = fibreArray.reduce((value, element) => value + element);
+    double carbohydratesSum = carbohydratesArray.reduce((value, element) => value + element);
+    double sugarsSum = sugarsArray.reduce((value, element) => value + element);
+    double fatsSum = fatsArray.reduce((value, element) => value + element);
+    double caloriesSum = caloriesArray.reduce((value, element) => value + element);
+    
+    _usersDao.updateUsersMealNutrition(usersMealId, carbohydratesSum, fibreSum, sugarsSum, caloriesSum, fatsSum);
+  }
+
+  Future<void> createNewUsersMeal(String name) async {
+    int userId = await _obtainUserId();
+    
+    return _usersDao.saveUsersMeal(name, userId);
+  } 
+
   Future<void> removeFoodFromFavorites(int userId, int foodId) async {
-    return await _usersDao.removeFavoriteFood(userId, foodId);
+    return _usersDao.removeFavoriteFood(userId, foodId);
   }
 
   Future<void> removeLoggedInUsersFoodFromFavorites(int foodId) async {
     int userId = await _obtainUserId();
-    return await _usersDao.removeFavoriteFood(userId, foodId);
+    return _usersDao.removeFavoriteFood(userId, foodId);
   }
 
   Future<bool> isLoggedInUsersFoodFavorite(int foodId) async {
     int userId = await _obtainUserId();
-    return (await _usersDao.findFavoriteFoodByUserIdAndFoodId(
-            userId, foodId)) !=
-        null;
+
+    UsersFavoriteFood? favoriteFood = await _usersDao.findFavoriteFoodByUserIdAndFoodId(userId, foodId);
+    return favoriteFood != null;
   }
 
   Future<List<Food>> getUsersFavoriteFoods(int userId) async {

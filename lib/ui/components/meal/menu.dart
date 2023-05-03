@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:umte_project/data/enums/type_of_meal.dart';
 import 'package:umte_project/data/enums/week_day.dart';
 import 'package:umte_project/database/database.dart';
 import 'package:umte_project/services/user_service.dart';
+import 'package:umte_project/state/nutrition_tracker_state.dart';
+import 'package:umte_project/ui/components/nutrition_tracker.dart';
 
 import 'menu_card.dart';
 
@@ -22,6 +25,8 @@ class Menu extends StatelessWidget {
       color: theme.colorScheme.onSurface,
     );
 
+    // Provider.of<NutritionTrackerState>(context, listen: false).clearArrays();
+
     return Card(
       color: theme.cardColor,
       child: Padding(
@@ -34,6 +39,7 @@ class Menu extends StatelessWidget {
                 Text(weekday.getName(), style: style),
               ],
             ),
+            const NutritionTracker(),
             FutureBuilder(
                 future: getUsersPlannedMeals(),
                 builder:

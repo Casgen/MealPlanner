@@ -127,5 +127,32 @@ class UsersDao extends DatabaseAccessor<UMTEDatabase> with _$UsersDaoMixin {
     return update(usersPlannedMeals).replace(usersPlannedMeal);
   }
 
+  Future<void> saveUsersMeal(String name, int userId) {
+    return into(usersMeals).insert(
+      UsersMealsCompanion(
+        name: Value(name),
+        userId: Value(userId),
+        fibre: const Value(0),
+        carbohydrates: const Value(0),
+        fats: const Value(0),
+        sugars: const Value(0),
+        calories: const Value(0),
+      )
+    );
+  }
+
+  Future<void> updateUsersMealNutrition(int usersMealId, double carbohydrates, double fibre, double sugars, double calories, double fats) {
+    return (update(usersMeals)
+      ..where((tbl) => tbl.id.equals(usersMealId)))
+      .write(UsersMealsCompanion(
+          carbohydrates: Value(carbohydrates),
+          fibre: Value(fibre),
+          sugars: Value(sugars),
+          calories: Value(calories),
+          fats: Value(fats),
+        )
+      );
+  }
+
 
 }

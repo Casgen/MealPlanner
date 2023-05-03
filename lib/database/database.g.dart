@@ -699,8 +699,36 @@ class $UsersMealsTable extends UsersMeals
           GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 100),
       type: DriftSqlType.string,
       requiredDuringInsert: true);
+  static const VerificationMeta _caloriesMeta =
+      const VerificationMeta('calories');
   @override
-  List<GeneratedColumn> get $columns => [id, userId, name];
+  late final GeneratedColumn<double> calories = GeneratedColumn<double>(
+      'calories', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _fibreMeta = const VerificationMeta('fibre');
+  @override
+  late final GeneratedColumn<double> fibre = GeneratedColumn<double>(
+      'fibre', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _carbohydratesMeta =
+      const VerificationMeta('carbohydrates');
+  @override
+  late final GeneratedColumn<double> carbohydrates = GeneratedColumn<double>(
+      'carbohydrates', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _sugarsMeta = const VerificationMeta('sugars');
+  @override
+  late final GeneratedColumn<double> sugars = GeneratedColumn<double>(
+      'sugars', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _fatsMeta = const VerificationMeta('fats');
+  @override
+  late final GeneratedColumn<double> fats = GeneratedColumn<double>(
+      'fats', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, userId, name, calories, fibre, carbohydrates, sugars, fats];
   @override
   String get aliasedName => _alias ?? 'users_meals';
   @override
@@ -725,6 +753,28 @@ class $UsersMealsTable extends UsersMeals
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
+    if (data.containsKey('calories')) {
+      context.handle(_caloriesMeta,
+          calories.isAcceptableOrUnknown(data['calories']!, _caloriesMeta));
+    }
+    if (data.containsKey('fibre')) {
+      context.handle(
+          _fibreMeta, fibre.isAcceptableOrUnknown(data['fibre']!, _fibreMeta));
+    }
+    if (data.containsKey('carbohydrates')) {
+      context.handle(
+          _carbohydratesMeta,
+          carbohydrates.isAcceptableOrUnknown(
+              data['carbohydrates']!, _carbohydratesMeta));
+    }
+    if (data.containsKey('sugars')) {
+      context.handle(_sugarsMeta,
+          sugars.isAcceptableOrUnknown(data['sugars']!, _sugarsMeta));
+    }
+    if (data.containsKey('fats')) {
+      context.handle(
+          _fatsMeta, fats.isAcceptableOrUnknown(data['fats']!, _fatsMeta));
+    }
     return context;
   }
 
@@ -740,6 +790,16 @@ class $UsersMealsTable extends UsersMeals
           .read(DriftSqlType.int, data['${effectivePrefix}user_id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      calories: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}calories']),
+      fibre: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}fibre']),
+      carbohydrates: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}carbohydrates']),
+      sugars: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}sugars']),
+      fats: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}fats']),
     );
   }
 
@@ -753,13 +813,41 @@ class UsersMeal extends DataClass implements Insertable<UsersMeal> {
   final int id;
   final int userId;
   final String name;
-  const UsersMeal({required this.id, required this.userId, required this.name});
+  final double? calories;
+  final double? fibre;
+  final double? carbohydrates;
+  final double? sugars;
+  final double? fats;
+  const UsersMeal(
+      {required this.id,
+      required this.userId,
+      required this.name,
+      this.calories,
+      this.fibre,
+      this.carbohydrates,
+      this.sugars,
+      this.fats});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['user_id'] = Variable<int>(userId);
     map['name'] = Variable<String>(name);
+    if (!nullToAbsent || calories != null) {
+      map['calories'] = Variable<double>(calories);
+    }
+    if (!nullToAbsent || fibre != null) {
+      map['fibre'] = Variable<double>(fibre);
+    }
+    if (!nullToAbsent || carbohydrates != null) {
+      map['carbohydrates'] = Variable<double>(carbohydrates);
+    }
+    if (!nullToAbsent || sugars != null) {
+      map['sugars'] = Variable<double>(sugars);
+    }
+    if (!nullToAbsent || fats != null) {
+      map['fats'] = Variable<double>(fats);
+    }
     return map;
   }
 
@@ -768,6 +856,17 @@ class UsersMeal extends DataClass implements Insertable<UsersMeal> {
       id: Value(id),
       userId: Value(userId),
       name: Value(name),
+      calories: calories == null && nullToAbsent
+          ? const Value.absent()
+          : Value(calories),
+      fibre:
+          fibre == null && nullToAbsent ? const Value.absent() : Value(fibre),
+      carbohydrates: carbohydrates == null && nullToAbsent
+          ? const Value.absent()
+          : Value(carbohydrates),
+      sugars:
+          sugars == null && nullToAbsent ? const Value.absent() : Value(sugars),
+      fats: fats == null && nullToAbsent ? const Value.absent() : Value(fats),
     );
   }
 
@@ -778,6 +877,11 @@ class UsersMeal extends DataClass implements Insertable<UsersMeal> {
       id: serializer.fromJson<int>(json['id']),
       userId: serializer.fromJson<int>(json['userId']),
       name: serializer.fromJson<String>(json['name']),
+      calories: serializer.fromJson<double?>(json['calories']),
+      fibre: serializer.fromJson<double?>(json['fibre']),
+      carbohydrates: serializer.fromJson<double?>(json['carbohydrates']),
+      sugars: serializer.fromJson<double?>(json['sugars']),
+      fats: serializer.fromJson<double?>(json['fats']),
     );
   }
   @override
@@ -787,68 +891,136 @@ class UsersMeal extends DataClass implements Insertable<UsersMeal> {
       'id': serializer.toJson<int>(id),
       'userId': serializer.toJson<int>(userId),
       'name': serializer.toJson<String>(name),
+      'calories': serializer.toJson<double?>(calories),
+      'fibre': serializer.toJson<double?>(fibre),
+      'carbohydrates': serializer.toJson<double?>(carbohydrates),
+      'sugars': serializer.toJson<double?>(sugars),
+      'fats': serializer.toJson<double?>(fats),
     };
   }
 
-  UsersMeal copyWith({int? id, int? userId, String? name}) => UsersMeal(
+  UsersMeal copyWith(
+          {int? id,
+          int? userId,
+          String? name,
+          Value<double?> calories = const Value.absent(),
+          Value<double?> fibre = const Value.absent(),
+          Value<double?> carbohydrates = const Value.absent(),
+          Value<double?> sugars = const Value.absent(),
+          Value<double?> fats = const Value.absent()}) =>
+      UsersMeal(
         id: id ?? this.id,
         userId: userId ?? this.userId,
         name: name ?? this.name,
+        calories: calories.present ? calories.value : this.calories,
+        fibre: fibre.present ? fibre.value : this.fibre,
+        carbohydrates:
+            carbohydrates.present ? carbohydrates.value : this.carbohydrates,
+        sugars: sugars.present ? sugars.value : this.sugars,
+        fats: fats.present ? fats.value : this.fats,
       );
   @override
   String toString() {
     return (StringBuffer('UsersMeal(')
           ..write('id: $id, ')
           ..write('userId: $userId, ')
-          ..write('name: $name')
+          ..write('name: $name, ')
+          ..write('calories: $calories, ')
+          ..write('fibre: $fibre, ')
+          ..write('carbohydrates: $carbohydrates, ')
+          ..write('sugars: $sugars, ')
+          ..write('fats: $fats')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, userId, name);
+  int get hashCode => Object.hash(
+      id, userId, name, calories, fibre, carbohydrates, sugars, fats);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is UsersMeal &&
           other.id == this.id &&
           other.userId == this.userId &&
-          other.name == this.name);
+          other.name == this.name &&
+          other.calories == this.calories &&
+          other.fibre == this.fibre &&
+          other.carbohydrates == this.carbohydrates &&
+          other.sugars == this.sugars &&
+          other.fats == this.fats);
 }
 
 class UsersMealsCompanion extends UpdateCompanion<UsersMeal> {
   final Value<int> id;
   final Value<int> userId;
   final Value<String> name;
+  final Value<double?> calories;
+  final Value<double?> fibre;
+  final Value<double?> carbohydrates;
+  final Value<double?> sugars;
+  final Value<double?> fats;
   const UsersMealsCompanion({
     this.id = const Value.absent(),
     this.userId = const Value.absent(),
     this.name = const Value.absent(),
+    this.calories = const Value.absent(),
+    this.fibre = const Value.absent(),
+    this.carbohydrates = const Value.absent(),
+    this.sugars = const Value.absent(),
+    this.fats = const Value.absent(),
   });
   UsersMealsCompanion.insert({
     this.id = const Value.absent(),
     required int userId,
     required String name,
+    this.calories = const Value.absent(),
+    this.fibre = const Value.absent(),
+    this.carbohydrates = const Value.absent(),
+    this.sugars = const Value.absent(),
+    this.fats = const Value.absent(),
   })  : userId = Value(userId),
         name = Value(name);
   static Insertable<UsersMeal> custom({
     Expression<int>? id,
     Expression<int>? userId,
     Expression<String>? name,
+    Expression<double>? calories,
+    Expression<double>? fibre,
+    Expression<double>? carbohydrates,
+    Expression<double>? sugars,
+    Expression<double>? fats,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (userId != null) 'user_id': userId,
       if (name != null) 'name': name,
+      if (calories != null) 'calories': calories,
+      if (fibre != null) 'fibre': fibre,
+      if (carbohydrates != null) 'carbohydrates': carbohydrates,
+      if (sugars != null) 'sugars': sugars,
+      if (fats != null) 'fats': fats,
     });
   }
 
   UsersMealsCompanion copyWith(
-      {Value<int>? id, Value<int>? userId, Value<String>? name}) {
+      {Value<int>? id,
+      Value<int>? userId,
+      Value<String>? name,
+      Value<double?>? calories,
+      Value<double?>? fibre,
+      Value<double?>? carbohydrates,
+      Value<double?>? sugars,
+      Value<double?>? fats}) {
     return UsersMealsCompanion(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       name: name ?? this.name,
+      calories: calories ?? this.calories,
+      fibre: fibre ?? this.fibre,
+      carbohydrates: carbohydrates ?? this.carbohydrates,
+      sugars: sugars ?? this.sugars,
+      fats: fats ?? this.fats,
     );
   }
 
@@ -864,6 +1036,21 @@ class UsersMealsCompanion extends UpdateCompanion<UsersMeal> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
+    if (calories.present) {
+      map['calories'] = Variable<double>(calories.value);
+    }
+    if (fibre.present) {
+      map['fibre'] = Variable<double>(fibre.value);
+    }
+    if (carbohydrates.present) {
+      map['carbohydrates'] = Variable<double>(carbohydrates.value);
+    }
+    if (sugars.present) {
+      map['sugars'] = Variable<double>(sugars.value);
+    }
+    if (fats.present) {
+      map['fats'] = Variable<double>(fats.value);
+    }
     return map;
   }
 
@@ -872,7 +1059,12 @@ class UsersMealsCompanion extends UpdateCompanion<UsersMeal> {
     return (StringBuffer('UsersMealsCompanion(')
           ..write('id: $id, ')
           ..write('userId: $userId, ')
-          ..write('name: $name')
+          ..write('name: $name, ')
+          ..write('calories: $calories, ')
+          ..write('fibre: $fibre, ')
+          ..write('carbohydrates: $carbohydrates, ')
+          ..write('sugars: $sugars, ')
+          ..write('fats: $fats')
           ..write(')'))
         .toString();
   }
