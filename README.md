@@ -1,4 +1,4 @@
-# umte_project
+# MealPlanner
 
 Caloric table project
 
